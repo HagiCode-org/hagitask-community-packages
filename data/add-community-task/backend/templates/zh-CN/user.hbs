@@ -121,7 +121,7 @@
 
 编写时的硬性规则：
 
-- 逐字照抄 Community `README.md` 中的 `$schema` 引用字符串：`manifest.json` 用 `../../schemas/...`，其余嵌套文件用 `../../../schemas/...`。它们作为文件系统路径看起来是错的，但校验器按文件名解析——不要"修正"层级。
+- 逐字照抄 Community `README.md` 中 `$schema` 对照表的绝对 GitHub raw URL：`manifest.json` 等顶层文件与 `frontend/`、`backend/`、`locales/` 下的嵌套文件都使用同一段 `https://raw.githubusercontent.com/HagiCode-org/hagitask/main/schemas/task-preset-plugin/<schema>.schema.json` 基础地址，仅文件名不同。本地校验器仍按文件名解析到嵌套的 `hagitask/schemas/task-preset-plugin/` 目录，URL 与本地子模块指向同一份权威 Schema。
 - manifest 声明的每个路径都必须真实存在，且必须位于包目录之内。
 - `store-page` 的 `slug` 必须等于目录名，每个文件的 `locale` 必须与文件名中的 locale 一致。
 - `catalog` 条目必须是小写 kebab-case；自由文本或本地化文案放进 `tags` 或 `badges`。

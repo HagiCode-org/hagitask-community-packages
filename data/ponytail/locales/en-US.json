@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../schemas/task-preset-plugin/locales.schema.json",
+  "$schema": "https://raw.githubusercontent.com/HagiCode-org/hagitask/main/schemas/task-preset-plugin/locales.schema.json",
   "taskPreset": {
     "displayName": "Ponytail",
     "title": "Create Ponytail Task",

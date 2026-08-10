@@ -120,7 +120,7 @@ Create every file. A package missing any of these is incomplete:
 | `store-page/index.en-US.md`, `index.zh-CN.md` | Frontmatter with `locale`, `slug`, `title`, `summary`, `status`, plus `catalog` and `tags` on the `en-US` page |
 
 Hard rules while writing:
-- Copy the `$schema` reference strings verbatim from the Community `README.md`. They are `../../schemas/...` for `manifest.json` and `../../../schemas/...` for every nested file. They look wrong as filesystem paths and are resolved by file name — do not "fix" the depth.
+- Copy the absolute GitHub raw `$schema` URLs from the Community `README.md` table verbatim. Both the top-level `manifest.json` and the nested `frontend/`, `backend/`, `locales/` files share the same base `https://raw.githubusercontent.com/HagiCode-org/hagitask/main/schemas/task-preset-plugin/<schema>.schema.json`, differing only by file name. The local validator still resolves by file name against the nested `hagitask/schemas/task-preset-plugin/` directory, so the URL and the local submodule point at the same authoritative schema.
 - Every path declared in the manifest must exist and must stay inside the package directory.
 - `store-page` `slug` must equal the directory name, and each file's `locale` must equal the locale in its filename.
 - `catalog` entries must be lowercase kebab-case; free-form or localized text belongs in `tags` or `badges`.
