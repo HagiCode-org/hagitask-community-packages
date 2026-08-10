@@ -204,6 +204,6 @@ editing generated output — `/index.json`, `/tasks/<taskId>.json`, and
 - This repository is the only source of truth for these task definitions.
 - Do not duplicate these definitions inside `hagitask-site`.
 - Do not commit generated catalog output, package archives, or build artifacts here.
-- Do not edit the vendored schema copy; schema changes belong in `hagitask` and flow in
-  through the `hagitask` nested submodule.
+- Do not edit anything under `hagitask/`; schema changes belong in the `hagitask`
+  repository and reach this one by advancing the nested submodule pointer.
 - Bump `version` in `manifest.json` using semantic versioning when publishing a change.
