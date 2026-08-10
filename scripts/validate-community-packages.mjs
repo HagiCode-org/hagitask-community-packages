@@ -15,10 +15,11 @@
  *
  * The authoritative schemas live in the `hagitask` nested submodule at
  * `hagitask/schemas/task-preset-plugin/`. A document's `$schema` reference
- * (e.g. `../../schemas/task-preset-plugin/manifest.schema.json`) is resolved
- * by file name against that nested directory only, so the validator never reads
- * outside `hagitask/schemas/task-preset-plugin/` or falls back to the Community
- * repository root.
+ * (e.g. `https://raw.githubusercontent.com/HagiCode-org/hagitask/main/schemas/task-preset-plugin/manifest.schema.json`)
+ * is resolved by file name against that nested directory only — the validator
+ * matches on the `schemas/task-preset-plugin/` segment of the URL and ignores
+ * the leading base — so it never reads outside `hagitask/schemas/task-preset-plugin/`
+ * or falls back to the Community repository root.
  *
  * Packages are discovered exclusively under `data/`. The repository root is no
  * longer a task entry point.
