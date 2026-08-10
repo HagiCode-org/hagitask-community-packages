@@ -102,24 +102,34 @@ absent. Only the `en-US` store page contributes `catalog` and `tags`.
 The validation baseline lives in the **nested `hagitask` submodule** at
 `hagitask/schemas/task-preset-plugin/`. This repository no longer vendors its own copy of the
 schemas; `hagitask` is the single authoritative schema source, consumed here through the
-nested submodule and by `hagitask-site` through the same nested submodule. The package
-`$schema` references keep their existing relative text (so a package can move unchanged
-between `hagitask/presets/<taskId>/` and `data/<taskId>/`); the validator resolves each
-`$schema` reference by file name against `hagitask/schemas/task-preset-plugin/`, never reading
-outside that directory.
+nested submodule and by `hagitask-site` through the same nested submodule. Every package
+`$schema` reference points at the authoritative schema on GitHub raw, so editors and CI can
+fetch it directly without the submodule:
+
+```text
+https://raw.githubusercontent.com/HagiCode-org/hagitask/main/schemas/task-preset-plugin/<schema>.schema.json
+```
+
+The path tail (`schemas/task-preset-plugin/<name>.schema.json`) is preserved verbatim, so a
+package still moves unchanged between `hagitask/presets/<taskId>/` and `data/<taskId>/`. The
+local validator resolves each `$schema` reference by file name against the nested
+`hagitask/schemas/task-preset-plugin/` directory (it matches on the `schemas/task-preset-plugin/`
+segment of the URL), never reading outside that directory, so the GitHub URL and the local
+submodule resolve to the same schema.
 
 | Package file | `$schema` value |
 | --- | --- |
-| `manifest.json` | `../../schemas/task-preset-plugin/manifest.schema.json` |
-| `frontend/panel.json` | `../../../schemas/task-preset-plugin/panel.schema.json` |
-| `frontend/commands.json` | `../../../schemas/task-preset-plugin/commands.schema.json` |
-| `backend/task-preset.json` | `../../../schemas/task-preset-plugin/task-preset.schema.json` |
-| `backend/prompts.json` | `../../../schemas/task-preset-plugin/prompt-package.schema.json` |
-| `locales/<locale>.json` | `../../../schemas/task-preset-plugin/locales.schema.json` |
+| `manifest.json` | `https://raw.githubusercontent.com/HagiCode-org/hagitask/main/schemas/task-preset-plugin/manifest.schema.json` |
+| `frontend/panel.json` | `https://raw.githubusercontent.com/HagiCode-org/hagitask/main/schemas/task-preset-plugin/panel.schema.json` |
+| `frontend/commands.json` | `https://raw.githubusercontent.com/HagiCode-org/hagitask/main/schemas/task-preset-plugin/commands.schema.json` |
+| `backend/task-preset.json` | `https://raw.githubusercontent.com/HagiCode-org/hagitask/main/schemas/task-preset-plugin/task-preset.schema.json` |
+| `backend/prompts.json` | `https://raw.githubusercontent.com/HagiCode-org/hagitask/main/schemas/task-preset-plugin/prompt-package.schema.json` |
+| `locales/<locale>.json` | `https://raw.githubusercontent.com/HagiCode-org/hagitask/main/schemas/task-preset-plugin/locales.schema.json` |
 
 The upstream source of truth for these schemas is
 [`hagitask/schemas/task-preset-plugin/`](https://github.com/HagiCode-org/hagitask/tree/main/schemas/task-preset-plugin).
-Initialize the nested submodule (see below) before validating so the schema root is present.
+Initialize the nested submodule (see below) before validating so the schema root is present
+for the local validator.
 
 ### Versioning
 
@@ -137,7 +147,7 @@ unchanged version with changed content makes published metadata ambiguous.
 4. **Update `manifest.json`**: set `taskPresetId` to `<taskId>`, reset `version` to
    `1.0.0`, set `owner`, and point `localization.bundles`, `ui.*`, and `backend.*` at the
    files you actually ship.
-5. **Keep every `$schema`** at the relative path listed above.
+5. **Keep every `$schema`** at the absolute GitHub raw URL listed above.
 6. **Write the locale bundles.** `locales/<locale>.json` holds the UI strings resolved
    through the manifest's `localization.namespace`. Keep the same key set in every locale
    so no language falls back silently.
