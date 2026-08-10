@@ -12,7 +12,7 @@
   },
   "kind": "custom-executor",
   "status": "experimental",
-  "owner": "PCode Team",
+  "owner": "Hagicode Team",
   "entrypoints": {
     "menuSurface": "session-create",
     "drawerId": "ponytail"
