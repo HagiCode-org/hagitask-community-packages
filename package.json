@@ -1,0 +1,17 @@
+{
+  "name": "hagitask-community-packages",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "HagiTask community task preset packages and their submission validation tooling.",
+  "scripts": {
+    "validate": "node scripts/validate-community-packages.mjs",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "ajv": "^8.17.1"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}
