@@ -1,0 +1,44 @@
+name: Validate Community Packages
+
+# Submits a required check (`validate-packages`) for pull requests that change
+# package content, and re-validates the whole catalog on `main` pushes.
+# A required status check on this job name protects the default branch.
+on:
+  pull_request:
+    paths:
+      - "**/manifest.json"
+      - "**/backend/**"
+      - "**/frontend/**"
+      - "**/locales/**"
+      - "**/store-page/**"
+      - "schemas/**"
+      - "scripts/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/validate-community-packages.yml"
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  validate-packages:
+    name: Validate packages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout community packages
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.12.0"
+          cache: npm
+
+      - name: Install locked toolchain
+        run: npm ci
+
+      - name: Validate community packages
+        run: npm run validate
