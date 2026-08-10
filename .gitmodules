@@ -1,0 +1,3 @@
+[submodule "hagitask"]
+	path = hagitask
+	url = ../hagitask
