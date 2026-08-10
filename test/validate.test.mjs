@@ -1,9 +1,11 @@
 /**
  * Fixture-oriented tests for the Community package validator.
  *
- * Each scenario builds a throwaway repository root (with the vendored schemas
- * copied in) and runs `validateCommunityPackages`, asserting the expected
- * pass/fail behaviour and the aggregated error format.
+ * Each scenario builds a throwaway repository root. Packages are placed under
+ * `data/<taskId>/` (the only discovery root), and the authoritative
+ * task-preset-plugin schemas are copied from the nested HagiTask source into
+ * `hagitask/schemas/task-preset-plugin/`. The validator resolves `$schema`
+ * references from that nested directory only.
  */
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
@@ -21,19 +23,31 @@ import { fileURLToPath } from 'node:url';
 import { validateCommunityPackages } from '../scripts/validate-community-packages.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const SR = 'https://hagicode.local/designs/task-preset-plugin-schemas';
+// Authoritative schema source: prefer the initialized nested submodule, then
+// fall back to the sibling HagiTask repository in the monorepo.
+const HAGITASK_SCHEMAS = existsSync(join(repoRoot, 'hagitask', 'schemas'))
+  ? join(repoRoot, 'hagitask', 'schemas')
+  : join(repoRoot, '..', 'hagitask', 'schemas');
+
+const DATA_DIR = 'data';
+const SCHEMA_REL = 'hagitask/schemas/task-preset-plugin';
 
 let root;
 
 before(() => {
   root = mkdtempSync(join(tmpdir(), 'comm-val-'));
-  cpSync(join(repoRoot, 'schemas'), join(root, 'schemas'), { recursive: true });
+  cpSync(HAGITASK_SCHEMAS, join(root, 'hagitask', 'schemas'), { recursive: true });
 });
 
 after(() => rmSync(root, { recursive: true, force: true }));
 
-function writePackage(dirName, files) {
-  const dir = join(root, dirName);
+/**
+ * Write a package. By default it is discovered under `data/<dirName>/`; pass
+ * `{ root: true }` to place it at the repository root (which must be ignored).
+ */
+function writePackage(dirName, files, opts = {}, targetRoot = root) {
+  const base = opts.root ? targetRoot : join(targetRoot, DATA_DIR);
+  const dir = join(base, dirName);
   mkdirSync(dir, { recursive: true });
   for (const [rel, content] of Object.entries(files)) {
     const f = join(dir, rel);
@@ -45,7 +59,7 @@ function writePackage(dirName, files) {
 function manifest(id, overrides = {}) {
   return JSON.stringify(
     {
-      $schema: '../../schemas/task-preset-plugin/manifest.schema.json',
+      $schema: '../../hagitask/schemas/task-preset-plugin/manifest.schema.json',
       schemaVersion: '1.0',
       taskPresetId: id,
       version: '1.0.0',
@@ -81,7 +95,7 @@ function manifest(id, overrides = {}) {
 function taskPreset() {
   return JSON.stringify(
     {
-      $schema: '../../../schemas/task-preset-plugin/task-preset.schema.json',
+      $schema: '../../../hagitask/schemas/task-preset-plugin/task-preset.schema.json',
       taskKey: 'test',
       scriptKey: 'autotask.test',
       defaultTargetType: 'repository',
@@ -114,7 +128,7 @@ function taskPreset() {
 function prompts() {
   return JSON.stringify(
     {
-      $schema: '../../../schemas/task-preset-plugin/prompt-package.schema.json',
+      $schema: '../../../hagitask/schemas/task-preset-plugin/prompt-package.schema.json',
       version: '1.0.0',
       templateEngine: 'handlebars',
       defaultLocale: 'en-US',
@@ -140,7 +154,7 @@ function prompts() {
 function panel() {
   return JSON.stringify(
     {
-      $schema: '../../../schemas/task-preset-plugin/panel.schema.json',
+      $schema: '../../../hagitask/schemas/task-preset-plugin/panel.schema.json',
       surface: 'drawer',
       title: { key: 'panel.title' },
       description: { key: 'panel.description' },
@@ -169,7 +183,7 @@ function panel() {
 
 function locales(loc) {
   return JSON.stringify({
-    $schema: '../../../schemas/task-preset-plugin/locales.schema.json',
+    $schema: '../../../hagitask/schemas/task-preset-plugin/locales.schema.json',
     taskPreset: {
       displayName: `Test ${loc}`,
       description: `Test description ${loc}`,
@@ -215,7 +229,7 @@ test('valid package passes with no errors', () => {
   writePackage('good-pkg', validPackageFiles('good-pkg'));
   const { packages, errors } = validateCommunityPackages(root);
   assert.ok(errors.length === 0, `expected no errors, got:\n${errors.map((e) => e.message).join('\n')}`);
-  assert.ok(packages.includes('good-pkg'));
+  assert.ok(packages.includes('data/good-pkg'));
 });
 
 test('invalid JSON is reported as a parse failure', () => {
@@ -223,30 +237,35 @@ test('invalid JSON is reported as a parse failure', () => {
     'manifest.json': '{ this is not valid json',
   });
   const { errors } = validateCommunityPackages(root);
-  const hit = errors.find((e) => e.packageId === 'bad-json' && e.field === 'parse');
+  const hit = errors.find((e) => e.packageId === 'data/bad-json' && e.field === 'parse');
   assert.ok(hit, 'expected a parse error for invalid JSON');
 });
 
 test('unresolved schema reference is reported', () => {
   const files = validPackageFiles('unresolved');
   files['manifest.json'] = JSON.stringify({
-    $schema: '../../schemas/task-preset-plugin/does-not-exist.schema.json',
+    $schema: '../../hagitask/schemas/task-preset-plugin/does-not-exist.schema.json',
     taskPresetId: 'unresolved',
     version: '1.0.0',
   });
   writePackage('unresolved', files);
   const { errors } = validateCommunityPackages(root);
   const hit = errors.find(
-    (e) => e.packageId === 'unresolved' && e.message.includes('unresolved schema reference'),
+    (e) => e.packageId === 'data/unresolved' && e.message.includes('unresolved schema reference'),
   );
   assert.ok(hit, 'expected unresolved schema reference error');
 });
 
-test('malformed package directory (no manifest) is not treated as a package', () => {
-  writePackage('empty-dir', { 'readme.txt': 'not a package' });
+test('root-level directory is NOT discovered as a package', () => {
+  // A manifest at the repository root (not under data/) must be ignored.
+  writePackage('root-only', validPackageFiles('root-only'), { root: true });
   const { packages, errors } = validateCommunityPackages(root);
-  assert.ok(!packages.includes('empty-dir'));
-  assert.ok(!errors.some((e) => e.packageId === 'empty-dir'));
+  assert.ok(!packages.includes('data/root-only'), 'root-level dir must not appear in discovered packages');
+  assert.ok(!packages.includes('root-only'), 'root-level dir must not appear in discovered packages');
+  assert.ok(
+    !errors.some((e) => e.packageId === 'root-only' || e.packageId === 'data/root-only'),
+    'no errors should reference the root-level directory',
+  );
 });
 
 test('duplicate canonical ids are detected', () => {
@@ -275,7 +294,7 @@ test('missing declared resource is an explicit failure', () => {
   writePackage('missing', files);
   const { errors } = validateCommunityPackages(root);
   const hit = errors.find(
-    (e) => e.packageId === 'missing' && e.message.includes('missing declared file'),
+    (e) => e.packageId === 'data/missing' && e.message.includes('missing declared file'),
   );
   assert.ok(hit, 'expected missing declared file error');
 });
@@ -286,7 +305,7 @@ test('missing prompt template is an explicit failure', () => {
   writePackage('missing-tpl', files);
   const { errors } = validateCommunityPackages(root);
   const hit = errors.find(
-    (e) => e.packageId === 'missing-tpl' && e.message.includes('prompt template file not found'),
+    (e) => e.packageId === 'data/missing-tpl' && e.message.includes('prompt template file not found'),
   );
   assert.ok(hit, 'expected missing prompt template error');
 });
@@ -297,7 +316,7 @@ test('inconsistent localization: store page slug must equal taskId', () => {
   writePackage('wrong-slug', files);
   const { errors } = validateCommunityPackages(root);
   const hit = errors.find(
-    (e) => e.packageId === 'wrong-slug' && e.field === 'slug' && e.message.includes('must equal taskId'),
+    (e) => e.packageId === 'data/wrong-slug' && e.field === 'slug' && e.message.includes('must equal taskId'),
   );
   assert.ok(hit, 'expected slug mismatch error');
 });
@@ -308,7 +327,7 @@ test('inconsistent localization: missing store page for supported locale', () =>
   writePackage('missing-locale', files);
   const { errors } = validateCommunityPackages(root);
   const hit = errors.find(
-    (e) => e.packageId === 'missing-locale' && e.message.includes('missing store page for supported locale'),
+    (e) => e.packageId === 'data/missing-locale' && e.message.includes('missing store page for supported locale'),
   );
   assert.ok(hit, 'expected missing store page error');
 });
@@ -322,10 +341,56 @@ test('schema violation is reported with field location', () => {
   writePackage('schema-violation', files);
   const { errors } = validateCommunityPackages(root);
   const hit = errors.find(
-    (e) => e.packageId === 'schema-violation' && e.field.includes('schema:manifest.schema.json'),
+    (e) => e.packageId === 'data/schema-violation' && e.field.includes('schema:manifest.schema.json'),
   );
   assert.ok(hit, `expected schema violation error, got:\n${errors.map((e) => e.message).join('\n')}`);
 });
 
-// ensure SR constant is referenced (keeps the import intent explicit)
-assert.ok(typeof SR === 'string' && SR.endsWith('task-preset-plugin-schemas'));
+test('missing nested schema root makes every reference unresolved', () => {
+  // A repository root with data/ packages but no hagitask/schemas must fail.
+  const isolated = mkdtempSync(join(tmpdir(), 'comm-val-noschema-'));
+  try {
+    writePackage('orphan', validPackageFiles('orphan'), {}, isolated);
+    const { packages, errors } = validateCommunityPackages(isolated);
+    assert.ok(packages.includes('data/orphan'), 'package under data/ should still be discovered');
+    const hit = errors.find((e) => e.message.includes('unresolved schema reference'));
+    assert.ok(hit, 'expected unresolved schema reference when nested schema root is absent');
+  } finally {
+    rmSync(isolated, { recursive: true, force: true });
+  }
+});
+
+// Keep an explicit reference to the canonical schema source path for clarity.
+assert.ok(SCHEMA_REL === 'hagitask/schemas/task-preset-plugin');
+
+test('discovers the six canonical community tasks under data/ and nothing at the repo root', () => {
+  const { packages } = validateCommunityPackages(repoRoot);
+  const expected = [
+    'data/claude-md-update',
+    'data/goal',
+    'data/last30days',
+    'data/openspec-spec-compress',
+    'data/ponytail',
+    'data/ui-master',
+  ];
+  for (const id of expected) {
+    assert.ok(packages.includes(id), `expected canonical task ${id} to be discovered`);
+  }
+  assert.equal(packages.length, expected.length, 'exactly the six canonical packages are discovered');
+  assert.ok(
+    !packages.some((p) => !p.startsWith('data/')),
+    'no package is discovered at the repository root (data/ is the only entry point)',
+  );
+});
+
+test('authoritative schemas resolve from the hagitask nested submodule, with no duplicated root schema tree', () => {
+  const nestedSchemaDir = join(repoRoot, 'hagitask', 'schemas', 'task-preset-plugin');
+  assert.ok(
+    existsSync(join(nestedSchemaDir, 'manifest.schema.json')),
+    'authoritative schema must live under the hagitask nested submodule',
+  );
+  assert.ok(
+    !existsSync(join(repoRoot, 'schemas')),
+    'the duplicated root-level schemas/ tree must be removed',
+  );
+});

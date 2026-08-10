@@ -13,16 +13,22 @@
  *   6. aggregates every error and exits non-zero so a required check can block
  *      an invalid submission.
  *
- * The schemas live in `schemas/task-preset-plugin/`. A document's `$schema`
- * reference (e.g. `../../schemas/task-preset-plugin/manifest.schema.json`) is
- * resolved against that directory by file name, so the validator never reads
- * outside the Community repository.
+ * The authoritative schemas live in the `hagitask` nested submodule at
+ * `hagitask/schemas/task-preset-plugin/`. A document's `$schema` reference
+ * (e.g. `../../schemas/task-preset-plugin/manifest.schema.json`) is resolved
+ * by file name against that nested directory only, so the validator never reads
+ * outside `hagitask/schemas/task-preset-plugin/` or falls back to the Community
+ * repository root.
+ *
+ * Packages are discovered exclusively under `data/`. The repository root is no
+ * longer a task entry point.
  */
 import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { join, resolve, sep, basename, dirname } from 'node:path';
 import Ajv from 'ajv/dist/2020.js';
 
-const SCHEMA_DIR = join('schemas', 'task-preset-plugin');
+const DATA_DIR = 'data';
+const SCHEMA_DIR = join('hagitask', 'schemas', 'task-preset-plugin');
 const TASK_PRESET_ID_PATTERN = /^[a-z0-9][a-z0-9-]*$/;
 
 /**
@@ -55,8 +61,10 @@ function walkJsonFiles(packageDir, base, out) {
 
 /**
  * Resolve a document `$schema` reference to a schema file name inside
- * `<repoRoot>/schemas/task-preset-plugin/`. Returns null when the referenced
- * schema cannot be resolved inside the repository.
+ * `<repoRoot>/hagitask/schemas/task-preset-plugin/`. The file name is taken from
+ * the `schemas/task-preset-plugin/` segment of the reference; the only location
+ * the validator ever consults is the nested HagiTask schema root. Returns null
+ * when the referenced schema cannot be resolved there.
  */
 function resolveSchemaFileName(repoRoot, schemaRef) {
   const anchor = 'schemas/task-preset-plugin/';
@@ -79,7 +87,7 @@ function buildValidator(repoRoot) {
       try {
         cache.set(f, ajv.compile(schema));
       } catch (e) {
-        // A broken vendored schema should not crash discovery; surface it later.
+        // A broken schema should not crash discovery; surface it later.
         cache.set(f, () => true);
       }
     }
@@ -98,13 +106,21 @@ function buildValidator(repoRoot) {
 }
 
 function discoverPackages(repoRoot) {
+  const dataRoot = join(repoRoot, DATA_DIR);
+  if (!existsSync(dataRoot) || !statSync(dataRoot).isDirectory()) {
+    throw new Error(
+      `Community data directory not found at ${dataRoot}. ` +
+        `Packages must live under \`data/<taskId>/\`. ` +
+        `Ensure you run validation from the Community repository root and have initialized its nested submodules.`,
+    );
+  }
   const result = [];
-  for (const entry of readdirSync(repoRoot, { withFileTypes: true })) {
+  for (const entry of readdirSync(dataRoot, { withFileTypes: true })) {
     if (!entry.isDirectory()) continue;
-    if (['.git', 'node_modules', 'dist', 'schemas', 'scripts'].includes(entry.name)) continue;
-    const manifestPath = join(repoRoot, entry.name, 'manifest.json');
+    const dirName = entry.name;
+    const manifestPath = join(dataRoot, entry.name, 'manifest.json');
     if (existsSync(manifestPath)) {
-      result.push({ dirName: entry.name, dir: join(repoRoot, entry.name) });
+      result.push({ dirName, dir: join(dataRoot, entry.name), rel: `${DATA_DIR}/${entry.name}` });
     }
   }
   return result;
@@ -150,8 +166,8 @@ function parseFrontmatter(md) {
 function validatePackage(pkg, repoRoot, validator) {
   /** @type {ValidationError[]} */
   const errors = [];
-  const rel = (file) => `${pkg.dirName}/${file}`;
-  const add = (file, field, message) => errors.push({ packageId: pkg.dirName, file: rel(file), field, message });
+  const rel = (file) => `${pkg.rel}/${file}`;
+  const add = (file, field, message) => errors.push({ packageId: pkg.rel, file: rel(file), field, message });
 
   const manifestRes = readJsonSafe(join(pkg.dir, 'manifest.json'));
   if (!manifestRes.ok) {
@@ -182,7 +198,7 @@ function validatePackage(pkg, repoRoot, validator) {
     if (data && typeof data === 'object' && typeof data.$schema === 'string') {
       const fileName = resolveSchemaFileName(repoRoot, data.$schema);
       if (!fileName) {
-        add(jf, `$schema(${data.$schema})`, 'unresolved schema reference (not found in schemas/task-preset-plugin/)');
+        add(jf, `$schema(${data.$schema})`, 'unresolved schema reference (not found in hagitask/schemas/task-preset-plugin/)');
       } else if (validator.hasSchema(fileName)) {
         const errs = validator.validateFile(fileName, data);
         for (const e of errs) {
@@ -348,7 +364,7 @@ export function validateCommunityPackages(repoRoot) {
     if (res.ok && typeof res.value.taskPresetId === 'string') {
       const id = res.value.taskPresetId;
       if (!idMap.has(id)) idMap.set(id, []);
-      idMap.get(id).push(pkg.dirName);
+      idMap.get(id).push(pkg.rel);
     }
   }
   const duplicateIds = [...idMap.entries()].filter(([, dirs]) => dirs.length > 1);
@@ -368,7 +384,7 @@ export function validateCommunityPackages(repoRoot) {
     }
   }
 
-  return { packages: packages.map((p) => p.dirName).sort(), errors: allErrors };
+  return { packages: packages.map((p) => p.rel).sort(), errors: allErrors };
 }
 
 function formatError(e) {
@@ -377,6 +393,13 @@ function formatError(e) {
 
 function main() {
   const repoRoot = resolve(process.argv[2] || process.cwd());
+  const schemaRoot = join(repoRoot, SCHEMA_DIR);
+  if (!existsSync(schemaRoot)) {
+    console.error(`✗ Authoritative schema root not found at ${schemaRoot}`);
+    console.error(
+      `  Initialize the nested hagitask submodule before validating:\n  git submodule update --init --recursive`,
+    );
+  }
   const { packages, errors } = validateCommunityPackages(repoRoot);
 
   const summaryLines = [];

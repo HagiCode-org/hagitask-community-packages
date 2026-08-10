@@ -6,13 +6,16 @@ name: Validate Community Packages
 on:
   pull_request:
     paths:
+      - "data/**"
+      - "hagitask/**"
+      - ".gitmodules"
       - "**/manifest.json"
       - "**/backend/**"
       - "**/frontend/**"
       - "**/locales/**"
       - "**/store-page/**"
-      - "schemas/**"
       - "scripts/**"
+      - "test/**"
       - "package.json"
       - "package-lock.json"
       - ".github/workflows/validate-community-packages.yml"
@@ -30,6 +33,8 @@ jobs:
     steps:
       - name: Checkout community packages
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
