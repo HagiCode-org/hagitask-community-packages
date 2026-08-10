@@ -1,0 +1,62 @@
+{
+  "$schema": "../../../schemas/task-preset-plugin/locales.schema.json",
+  "taskPreset": {
+    "displayName": "Add Community Task",
+    "title": "Create Add Community Task",
+    "description": "Author a complete HagiTask Community Task package from a structured brief, validate it locally, and open a Pull Request from your GitHub fork.",
+    "defaultTitle": "New Community Task package",
+    "submit": "Create Community Task",
+    "submitting": "Queueing Community Task authoring..."
+  },
+  "panel": {
+    "contextSectionTitle": "Context",
+    "contextSectionDescription": "Choose where the task runs and which read-only material the executor may consult.",
+    "briefSectionTitle": "Authoring brief",
+    "briefSectionDescription": "Everything below is written into the generated package. Vague input produces a vague task.",
+    "projectLabel": "Project *",
+    "projectHint": "The authoring task will be created in the selected project. Its working directory is only scratch space for the fork checkout.",
+    "taskNameLabel": "Community Task name *",
+    "taskNameHint": "Human readable name of the task you are authoring. The canonical lowercase kebab-case task id is derived from it and can never be renamed later.",
+    "taskNamePlaceholder": "API documentation maintenance",
+    "repositoryAccessLabel": "Read-only repository context",
+    "repositoryAccessHint": "Optionally attach repositories as read-only reference. Package files are always written to your Community Packages fork, never to these repositories.",
+    "repositoryAccessEmpty": "No repositories are available for the selected project yet.",
+    "referenceVaultsLabel": "Reference vaults",
+    "referenceVaultsHint": "Optionally attach vaults as read-only reference context for specs, notes, or prior explorations.",
+    "vaultEmptyTitle": "No vaults available",
+    "vaultEmptyDescription": "Create a vault first if you want to attach reference material to this authoring run.",
+    "projectReferencesLabel": "Project references",
+    "projectReferencesHint": "Optionally attach other projects as read-only context when the new task mirrors an existing workflow.",
+    "objectiveLabel": "Objective and user value *",
+    "objectiveHint": "What the new Community Task does, who installs it, and which problem it removes.",
+    "objectivePlaceholder": "Keep API reference docs aligned with the current route handlers, so reviewers stop catching stale endpoint docs during code review.",
+    "inputsLabel": "Input fields and constraints *",
+    "inputsHint": "The panel fields the new task should collect, which are required, and the boundaries the executor must respect.",
+    "inputsPlaceholder": "Required: docs directory, source route directory. Optional: excluded paths. Repository access must stay explicit and default to read.",
+    "qualityLabel": "Execution behavior and quality requirements *",
+    "qualityHint": "How the new task must behave: write scope, non-interactive rules, tools it may use, and what it must never do.",
+    "qualityPlaceholder": "Run non-interactively, only edit files under the docs directory, never invent endpoints that are absent from the source, and report the real result of the docs build.",
+    "acceptanceLabel": "Acceptance criteria *",
+    "acceptanceHint": "Observable conditions that decide whether a run of the new task succeeded.",
+    "acceptancePlaceholder": "Every documented endpoint exists in source, every new endpoint is documented, and the docs build exits zero.",
+    "publicationLabel": "Publication notes",
+    "publicationHint": "Optional. Catalog, tags, best fit, and anything the store page should say.",
+    "publicationPlaceholder": "catalog: documentation; tags: api, docs, maintenance; best fit: teams with hand-written API references."
+  },
+  "status": {
+    "resolvingUpstream": "Resolving upstream repository...",
+    "checkingAuth": "Checking GitHub authentication...",
+    "preparingFork": "Preparing your fork...",
+    "authoringPackage": "Authoring package files...",
+    "validating": "Running package validation...",
+    "creatingPullRequest": "Creating pull request..."
+  },
+  "errors": {
+    "missingRequiredFields": "Fill in the task name, objective, input constraints, quality requirements, and acceptance criteria before submitting.",
+    "ghNotAvailable": "The GitHub CLI (gh) is required. Install it and run gh auth login before dispatching this task.",
+    "ghNotAuthenticated": "gh is not authenticated. Run gh auth login, then dispatch the task again.",
+    "forkUnavailable": "Your account cannot fork the upstream Community Packages repository. Check organization policy or repository permissions.",
+    "validationFailed": "Package validation failed. Fix the reported file, field, or rule error in the package source instead of editing generated output.",
+    "pullRequestFailed": "The pull request could not be created. The working branch was pushed to your fork, so you can open the pull request manually."
+  }
+}

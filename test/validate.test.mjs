@@ -363,9 +363,10 @@ test('missing nested schema root makes every reference unresolved', () => {
 // Keep an explicit reference to the canonical schema source path for clarity.
 assert.ok(SCHEMA_REL === 'hagitask/schemas/task-preset-plugin');
 
-test('discovers the six canonical community tasks under data/ and nothing at the repo root', () => {
+test('discovers the canonical community tasks under data/ and nothing at the repo root', () => {
   const { packages } = validateCommunityPackages(repoRoot);
   const expected = [
+    'data/add-community-task',
     'data/claude-md-update',
     'data/goal',
     'data/last30days',
@@ -376,7 +377,7 @@ test('discovers the six canonical community tasks under data/ and nothing at the
   for (const id of expected) {
     assert.ok(packages.includes(id), `expected canonical task ${id} to be discovered`);
   }
-  assert.equal(packages.length, expected.length, 'exactly the six canonical packages are discovered');
+  assert.equal(packages.length, expected.length, 'exactly the canonical packages are discovered');
   assert.ok(
     !packages.some((p) => !p.startsWith('data/')),
     'no package is discovered at the repository root (data/ is the only entry point)',

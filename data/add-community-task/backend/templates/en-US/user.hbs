@@ -1,0 +1,185 @@
+## Run mode
+This prompt is running in a non-interactive environment.
+
+### Non-interactive rules
+- Do not use AskUserQuestion or any interactive confirmation tool.
+- When an optional choice is needed, pick a reasonable default and record the assumption.
+- Skip optional confirmations and continue directly.
+- Never pass a flag that would open an editor or a browser prompt (`gh pr create` must receive `--title` and `--body`).
+
+## Task
+Author a new HagiTask Community Task package and open a Pull Request that contributes it to the upstream Community Packages repository.
+
+## Authoring brief
+- Community Task name: `{{{communityTaskName}}}`
+- Objective and user value:
+
+{{{communityTaskObjective}}}
+
+- Input fields and constraints:
+
+{{{communityTaskInputs}}}
+
+- Execution behavior and quality requirements:
+
+{{{communityTaskQuality}}}
+
+- Acceptance criteria:
+
+{{{communityTaskAcceptance}}}
+
+{{#if communityTaskPublication}}
+- Publication notes (catalog, tags, best fit):
+
+{{{communityTaskPublication}}}
+{{else}}
+- No publication notes were provided. Derive catalog, tags, and best-fit framing from the objective and record that as an assumption.
+{{/if}}
+
+## Repository identity
+Resolve repositories by public GitHub identity only. Do not rely on the layout of the machine you are running on.
+
+- Upstream Community Packages: `https://github.com/HagiCode-org/hagitask-community-packages`
+- Read-only reference (schemas, README, shipped presets): `https://github.com/HagiCode-org/hagitask`
+
+Confirm both with `gh repo view <OWNER/REPO> --json name,owner,defaultBranchRef,isFork` and use the returned metadata — especially the upstream default branch — for every later command. Record the resolved upstream URL, fork URL, reference URL, and default branch in your result so the run is reproducible elsewhere.
+
+## Local context (read-only)
+- Temporary working directory: `{{projectPath}}`
+{{#if repositoryPath}}- Resolved repository hint: `{{repositoryPath}}`{{/if}}
+
+`{{projectPath}}` is scratch space for cloning and building only. It is **not** the Community Packages repository and it is **not** a package root. Never write package files there unless it is the checkout you created in step 3.
+
+{{#if targetScopeMarkdown}}
+### Read-only repository context
+
+{{{targetScopeMarkdown}}}
+{{else}}
+No repository scope was selected. Work only from the public upstream and reference repositories.
+{{/if}}
+
+{{#if referenceVaults}}
+### Supplemental reference vaults (read-only)
+{{#each referenceVaults}}
+- `{{name}}` (`{{id}}`) at `{{physicalPath}}`{{#if type}} [{{type}}]{{/if}}
+{{/each}}
+{{/if}}
+
+{{#if targetProjects}}
+### Supplemental project references (read-only)
+{{#each targetProjects}}
+- `{{name}}` at `{{physicalPath}}` (access: `{{accessType}}`)
+{{/each}}
+{{/if}}
+
+Selected repositories, vaults, and project references are **context only**. Every one of them is read-only, regardless of any access label. None of them is a write target, and none of them is where the Community package goes.
+
+## Execution flow
+
+### 1. Verify prerequisites
+- Run `gh --version` and `git --version`.
+- Run `gh auth status`. If it reports no authenticated account, stop immediately and report the exact command output plus `gh auth login` as the remediation. Do not continue.
+- Run `gh api user --jq .login` to capture the fork owner login.
+
+### 2. Resolve or create the fork
+- Read upstream metadata with `gh repo view <upstream> --json defaultBranchRef,nameWithOwner`.
+- Check for an existing fork with `gh repo view <fork-owner>/<upstream-repo-name> --json nameWithOwner,parent`.
+- If that repository exists and its `parent` is the upstream, reuse it. Do not create a second fork.
+- If it does not exist, run `gh repo fork <upstream> --clone=false` and wait until `gh repo view` resolves the new fork.
+- If the fork cannot be created because of permissions or org policy, stop and report the blocker. Never fall back to pushing to the upstream.
+
+### 3. Prepare a temporary checkout
+- Clone the fork by URL into a fresh temporary directory, for example `git clone https://github.com/<fork-owner>/<repo>.git`.
+- Add the upstream as a remote and sync the default branch so the branch is not stale.
+- Run `git submodule update --init --recursive` so `hagitask/schemas/task-preset-plugin/` is present. Validation cannot resolve `$schema` references without it.
+- Run `git status --porcelain` and confirm the tree is clean. If unexpected local changes exist, stop and report them rather than overwriting user content.
+- Create a working branch, for example `git switch -c add-community-task/<task-id>`. Never commit onto the fork's default branch.
+
+### 4. Choose the canonical task id
+- Derive a lowercase kebab-case id from the Community Task name, matching `^[a-z0-9][a-z0-9-]*$`.
+- Confirm `data/<task-id>/` does not already exist in the upstream. If it does, pick a distinct id and record the choice as an assumption. The directory name is the canonical `taskId` and can never be renamed later.
+
+### 5. Read the reference material before writing
+- Read the Community repository `README.md` for the package layout, the `$schema` table, and the contribution rules.
+- Read the closest existing package under `data/` as a structural example.
+- Read the authoritative schemas in `hagitask/schemas/task-preset-plugin/` and the shipped presets under `hagitask/presets/`. Treat all of it as read-only.
+
+### 6. Write the package under `data/<task-id>/`
+Create every file. A package missing any of these is incomplete:
+
+| File | Requirement |
+| --- | --- |
+| `manifest.json` | `taskPresetId` equals the directory name, `version` is `1.0.0` semver, `status`, `kind`, `owner`, `localization` (`en-US` + `zh-CN` bundles), `ui.panel`, `site.storePage`, `backend.taskPreset`, `backend.prompts` |
+| `frontend/panel.json` | Panel definition using existing renderers only |
+| `frontend/commands.json` | Only when the task actually ships a command catalog; otherwise omit the file **and** `ui.commands` |
+| `backend/task-preset.json` | `taskKey`, `scriptKey`, `defaultTargetType`, all three `targets` collections, `requirements`, `inputBindings` |
+| `backend/prompts.json` | Inputs, `handlebars` engine, and `en-US` + `zh-CN` locale template pairs |
+| `backend/templates/en-US/system.md`, `user.hbs` | English execution rules |
+| `backend/templates/zh-CN/system.md`, `user.hbs` | Chinese templates with equivalent constraint coverage |
+| `locales/en-US.json`, `locales/zh-CN.json` | Identical key sets, only the natural language differs |
+| `store-page/index.en-US.md`, `index.zh-CN.md` | Frontmatter with `locale`, `slug`, `title`, `summary`, `status`, plus `catalog` and `tags` on the `en-US` page |
+
+Hard rules while writing:
+- Copy the `$schema` reference strings verbatim from the Community `README.md`. They are `../../schemas/...` for `manifest.json` and `../../../schemas/...` for every nested file. They look wrong as filesystem paths and are resolved by file name — do not "fix" the depth.
+- Every path declared in the manifest must exist and must stay inside the package directory.
+- `store-page` `slug` must equal the directory name, and each file's `locale` must equal the locale in its filename.
+- `catalog` entries must be lowercase kebab-case; free-form or localized text belongs in `tags` or `badges`.
+- Keep frontmatter flat: `key: value` lines and `  - item` sequences only. Nested maps, flow sequences, and multi-line scalars are not parsed.
+- Panel field `output` values, `task-preset.json` `inputBindings[].input`, and `prompts.json` input names must line up one to one. A binding with no matching panel output, or a prompt parameter with no binding, is a defect.
+- Every `{ "key": "..." }` reference in the panel must resolve to a real key in both locale bundles. Nothing validates this, so check it yourself.
+- Make the authored prompt templates non-interactive, explicit about write scope, and honest about validation, matching the quality requirements in the brief.
+
+### 7. Validate for real
+From the Community repository root:
+
+```bash
+npm install
+npm run validate
+npm test
+```
+
+- Report the true exit status of each command.
+- If `npm run validate` fails, fix the source file under `data/<task-id>/` and rerun. Do not edit generated output and do not suppress errors.
+- If a repository fixture test enumerates the known package list, extend that list rather than deleting the assertion.
+
+### 8. Commit and open the Pull Request
+- Stage only files under `data/<task-id>/` plus any fixture list the repository requires you to extend. Confirm with `git status --porcelain` that nothing under `hagitask/` is staged.
+- Commit with a descriptive message and push the branch to the fork.
+- Create the Pull Request against upstream:
+
+```bash
+gh pr create \
+  --repo <upstream-owner>/<upstream-repo> \
+  --head <fork-owner>:<branch> \
+  --base <upstream-default-branch> \
+  --title "<title>" \
+  --body "<body>"
+```
+
+- Verify the created PR's head and base with `gh pr view <number> --repo <upstream> --json headRepositoryOwner,headRefName,baseRefName,url`. The base must be the upstream Community Packages repository, never the reference `hagitask` repository and never the fork itself.
+- If PR creation fails, report the exact error and leave the pushed branch in place so the user can finish manually.
+
+## Requirements
+1. Resolve every repository from public GitHub identity, never from a local relative path.
+2. Write only inside `data/<task-id>/` on a working branch of your fork.
+3. Treat the user's repositories, vaults, and project references as read-only context.
+4. Never modify anything under `hagitask/`.
+5. Generate every required package resource; do not ship a partial package.
+6. Initialize nested submodules before validating.
+7. Run the real validation commands and report their real results.
+8. Reuse an existing fork instead of creating a duplicate.
+9. Stop with actionable diagnostics on any auth, permission, or GitHub failure instead of claiming success.
+10. Reply in the user's input language by default; for mixed-language input, follow the last explicit language instruction.
+
+## Manual review reminder
+A passing validator proves structure, not quality. It does not check locale key parity, whether a `{ "key": ... }` reference resolves, whether the prompt text is coherent, or whether the store page describes real behavior. List these as open review items instead of treating a green run as editorial approval.
+
+## Output format
+- Return output in this exact order:
+  1. `## Conclusion`
+  2. `## Contribution result`
+  3. `## Assumptions (if any)`
+  4. `## Next step`
+- Under `## Contribution result`, always report: canonical task id, files created, upstream URL, fork URL (and whether it was reused or newly created), reference repository URL, upstream default branch, working branch, the exit status of each validation command, the manual review items, and the PR number and URL. If the run stopped early, state the exact blocking step and command output in place of the PR.
+- Write `None` under assumptions when there are none.
+- When assumptions are needed, use this exact format: `Assumption: <one sentence>; Reason: <one sentence>; Impact: <one sentence>`.
