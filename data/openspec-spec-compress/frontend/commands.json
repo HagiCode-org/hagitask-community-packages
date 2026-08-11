@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/HagiCode-org/hagitask/main/schemas/task-preset-plugin/commands.schema.json",
+  "$schema": "https://tasks.hagicode.com/schemas/task-preset-plugin/commands.schema.json",
   "schemaVersion": "1.1",
   "selectionMode": "single",
   "groups": [

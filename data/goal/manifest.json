@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/HagiCode-org/hagitask/main/schemas/task-preset-plugin/manifest.schema.json",
+  "$schema": "https://tasks.hagicode.com/schemas/task-preset-plugin/manifest.schema.json",
   "schemaVersion": "1.0",
   "taskPresetId": "goal",
   "version": "1.0.0",
