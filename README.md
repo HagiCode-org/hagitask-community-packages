@@ -149,28 +149,14 @@ unchanged version with changed content makes published metadata ambiguous.
 
 ## Contribute a Task
 
-1. **Initialize nested submodules** so the schema source is available:
-   `git submodule update --init --recursive`.
-2. **Pick a canonical Task ID.** Lowercase kebab-case, unique across `data/`.
-3. **Create `data/<taskId>/`** using the layout above. Copying the closest existing package
-   (for example `data/ui-master/`) is the fastest start.
-4. **Update `manifest.json`**: set `taskPresetId` to `<taskId>`, reset `version` to
-   `1.0.0`, set `owner`, and point `localization.bundles`, `ui.*`, and `backend.*` at the
-   files you actually ship.
-5. **Keep every `$schema`** at the absolute `https://tasks.hagicode.com/schemas/` URL listed above.
-6. **Write the locale bundles.** `locales/<locale>.json` holds the UI strings resolved
-   through the manifest's `localization.namespace`. Keep the same key set in every locale
-   so no language falls back silently.
-7. **Write the store pages.** `store-page/index.en-US.md` and `index.zh-CN.md` need
-   `locale`, `slug`, `title`, and `summary` in frontmatter; put `catalog` and `tags` in the
-   `en-US` page because that is what the published `category` and `tags` are derived from.
-   The Markdown body below the frontmatter is the long-form store description.
-8. **Add the prompt templates** for every locale listed in `backend/prompts.json`.
-9. **Validate locally** (see below).
-10. **Open a Pull Request against this repository.** This repository — not `hagitask-site`
-    — is the submission destination. After review and merge, `hagitask-site` bumps its
-    `community-packages/` submodule pointer and the next site build publishes your
-    `/index.json` entry, `/tasks/<taskId>.json`, and `/packages/<taskId>.zip`.
+Read the complete, user-facing walkthrough in the
+[HagiTask community guide](https://docs.hagicode.com/guides/hagitask/community/). It covers
+initializing the nested Schema checkout, choosing a canonical ID, creating `data/<taskId>/`,
+writing locale and store-page resources, validating, versioning, and submitting a Pull Request.
+
+The technical contract remains in this README: package files belong under `data/<taskId>/`,
+the absolute `$schema` values above are required, and the Pull Request target is this
+repository—not `hagitask-site` or `hagitask`.
 
 ## Validate Locally
 
