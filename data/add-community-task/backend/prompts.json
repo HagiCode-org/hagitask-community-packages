@@ -23,33 +23,10 @@
       "description": "Human readable name of the Community Task to author. Drives the canonical kebab-case task id and store-page title."
     },
     {
-      "name": "communityTaskObjective",
+      "name": "communityTaskBrief",
       "source": "task-preset-input",
       "required": true,
-      "description": "Objective and user value of the Community Task being authored."
-    },
-    {
-      "name": "communityTaskInputs",
-      "source": "task-preset-input",
-      "required": true,
-      "description": "Panel input fields and constraints the authored Community Task must collect."
-    },
-    {
-      "name": "communityTaskQuality",
-      "source": "task-preset-input",
-      "required": true,
-      "description": "Execution behavior and quality requirements the authored prompt templates must enforce."
-    },
-    {
-      "name": "communityTaskAcceptance",
-      "source": "task-preset-input",
-      "required": true,
-      "description": "Acceptance criteria that decide whether the authored Community Task package is complete."
-    },
-    {
-      "name": "communityTaskPublication",
-      "source": "task-preset-input",
-      "description": "Optional publication notes: catalog, tags, best-fit scenarios, and store-page framing."
+      "description": "Unified authoring brief containing objective, constraints, execution and quality requirements, acceptance criteria, and optional publication context."
     },
     {
       "name": "targetScopeMarkdown",

@@ -14,6 +14,7 @@ import {
   rmSync,
   mkdirSync,
   writeFileSync,
+  readFileSync,
   cpSync,
   existsSync,
 } from 'node:fs';
@@ -428,4 +429,38 @@ test('authoritative schemas resolve from the hagitask nested submodule, with no 
     !existsSync(join(repoRoot, 'schemas')),
     'the duplicated root-level schemas/ tree must be removed',
   );
+});
+
+test('add-community-task uses one unified brief across panel, bindings, prompts, and templates', () => {
+  const packageRoot = join(repoRoot, 'data', 'add-community-task');
+  const panel = JSON.parse(readFileSync(join(packageRoot, 'frontend/panel.json'), 'utf8'));
+  const preset = JSON.parse(readFileSync(join(packageRoot, 'backend/task-preset.json'), 'utf8'));
+  const prompts = JSON.parse(readFileSync(join(packageRoot, 'backend/prompts.json'), 'utf8'));
+  const panelText = readFileSync(join(packageRoot, 'frontend/panel.json'), 'utf8');
+  const templateText = [
+    readFileSync(join(packageRoot, 'backend/templates/en-US/user.hbs'), 'utf8'),
+    readFileSync(join(packageRoot, 'backend/templates/zh-CN/user.hbs'), 'utf8'),
+  ].join('\n');
+  const oldFields = [
+    'communityTaskObjective',
+    'communityTaskInputs',
+    'communityTaskQuality',
+    'communityTaskAcceptance',
+    'communityTaskPublication',
+  ];
+  const outputs = panel.sections.flatMap((section) => section.fields.map((field) => field.output));
+  const bindings = preset.inputBindings.map((binding) => binding.input);
+  const promptInputs = prompts.inputs.map((input) => input.name);
+
+  assert.ok(outputs.includes('communityTaskBrief'));
+  assert.equal(outputs.filter((output) => output === 'communityTaskBrief').length, 1);
+  assert.ok(bindings.includes('communityTaskBrief'));
+  assert.ok(promptInputs.includes('communityTaskBrief'));
+  assert.ok(templateText.includes('{{{communityTaskBrief}}}'));
+  for (const oldField of oldFields) {
+    assert.equal(outputs.includes(oldField), false, `${oldField} must not be a panel output`);
+    assert.equal(bindings.includes(oldField), false, `${oldField} must not be a preset binding`);
+    assert.equal(promptInputs.includes(oldField), false, `${oldField} must not be a prompt input`);
+    assert.equal(panelText.includes(oldField), false, `${oldField} must not be declared in the panel`);
+  }
 });

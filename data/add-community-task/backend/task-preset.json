@@ -60,34 +60,10 @@
       "required": true
     },
     {
-      "input": "communityTaskObjective",
-      "promptParameter": "communityTaskObjective",
-      "metadataKey": "autoTaskCommunityTaskObjective",
+      "input": "communityTaskBrief",
+      "promptParameter": "communityTaskBrief",
+      "metadataKey": "autoTaskCommunityTaskBrief",
       "required": true
-    },
-    {
-      "input": "communityTaskInputs",
-      "promptParameter": "communityTaskInputs",
-      "metadataKey": "autoTaskCommunityTaskInputs",
-      "required": true
-    },
-    {
-      "input": "communityTaskQuality",
-      "promptParameter": "communityTaskQuality",
-      "metadataKey": "autoTaskCommunityTaskQuality",
-      "required": true
-    },
-    {
-      "input": "communityTaskAcceptance",
-      "promptParameter": "communityTaskAcceptance",
-      "metadataKey": "autoTaskCommunityTaskAcceptance",
-      "required": true
-    },
-    {
-      "input": "communityTaskPublication",
-      "promptParameter": "communityTaskPublication",
-      "metadataKey": "autoTaskCommunityTaskPublication",
-      "required": false
     },
     {
       "input": "targetScopeMarkdown",

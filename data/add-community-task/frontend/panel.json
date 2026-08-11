@@ -77,54 +77,14 @@
       "description": { "key": "panel.briefSectionDescription" },
       "fields": [
         {
-          "id": "communityTaskObjective",
+          "id": "communityTaskBrief",
           "renderer": "multiline-text",
           "inputType": "haginput",
-          "label": { "key": "panel.objectiveLabel" },
-          "hint": { "key": "panel.objectiveHint" },
-          "placeholder": { "key": "panel.objectivePlaceholder" },
+          "label": { "key": "panel.briefLabel" },
+          "hint": { "key": "panel.briefHint" },
+          "placeholder": { "key": "panel.briefPlaceholder" },
           "required": true,
-          "output": "communityTaskObjective"
-        },
-        {
-          "id": "communityTaskInputs",
-          "renderer": "multiline-text",
-          "inputType": "haginput",
-          "label": { "key": "panel.inputsLabel" },
-          "hint": { "key": "panel.inputsHint" },
-          "placeholder": { "key": "panel.inputsPlaceholder" },
-          "required": true,
-          "output": "communityTaskInputs"
-        },
-        {
-          "id": "communityTaskQuality",
-          "renderer": "multiline-text",
-          "inputType": "haginput",
-          "label": { "key": "panel.qualityLabel" },
-          "hint": { "key": "panel.qualityHint" },
-          "placeholder": { "key": "panel.qualityPlaceholder" },
-          "required": true,
-          "output": "communityTaskQuality"
-        },
-        {
-          "id": "communityTaskAcceptance",
-          "renderer": "multiline-text",
-          "inputType": "haginput",
-          "label": { "key": "panel.acceptanceLabel" },
-          "hint": { "key": "panel.acceptanceHint" },
-          "placeholder": { "key": "panel.acceptancePlaceholder" },
-          "required": true,
-          "output": "communityTaskAcceptance"
-        },
-        {
-          "id": "communityTaskPublication",
-          "renderer": "multiline-text",
-          "inputType": "haginput",
-          "label": { "key": "panel.publicationLabel" },
-          "hint": { "key": "panel.publicationHint" },
-          "placeholder": { "key": "panel.publicationPlaceholder" },
-          "required": false,
-          "output": "communityTaskPublication"
+          "output": "communityTaskBrief"
         }
       ]
     }

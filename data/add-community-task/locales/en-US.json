@@ -12,7 +12,7 @@
     "contextSectionTitle": "Context",
     "contextSectionDescription": "Choose where the task runs and which read-only material the executor may consult.",
     "briefSectionTitle": "Authoring brief",
-    "briefSectionDescription": "Everything below is written into the generated package. Vague input produces a vague task.",
+    "briefSectionDescription": "Describe the complete task in one place. The prompt will structure it before writing the package.",
     "projectLabel": "Project *",
     "projectHint": "The authoring task will be created in the selected project. Its working directory is only scratch space for the fork checkout.",
     "taskNameLabel": "Community Task name *",
@@ -27,21 +27,9 @@
     "vaultEmptyDescription": "Create a vault first if you want to attach reference material to this authoring run.",
     "projectReferencesLabel": "Project references",
     "projectReferencesHint": "Optionally attach other projects as read-only context when the new task mirrors an existing workflow.",
-    "objectiveLabel": "Objective and user value *",
-    "objectiveHint": "What the new Community Task does, who installs it, and which problem it removes.",
-    "objectivePlaceholder": "Keep API reference docs aligned with the current route handlers, so reviewers stop catching stale endpoint docs during code review.",
-    "inputsLabel": "Input fields and constraints *",
-    "inputsHint": "The panel fields the new task should collect, which are required, and the boundaries the executor must respect.",
-    "inputsPlaceholder": "Required: docs directory, source route directory. Optional: excluded paths. Repository access must stay explicit and default to read.",
-    "qualityLabel": "Execution behavior and quality requirements *",
-    "qualityHint": "How the new task must behave: write scope, non-interactive rules, tools it may use, and what it must never do.",
-    "qualityPlaceholder": "Run non-interactively, only edit files under the docs directory, never invent endpoints that are absent from the source, and report the real result of the docs build.",
-    "acceptanceLabel": "Acceptance criteria *",
-    "acceptanceHint": "Observable conditions that decide whether a run of the new task succeeded.",
-    "acceptancePlaceholder": "Every documented endpoint exists in source, every new endpoint is documented, and the docs build exits zero.",
-    "publicationLabel": "Publication notes",
-    "publicationHint": "Optional. Catalog, tags, best fit, and anything the store page should say.",
-    "publicationPlaceholder": "catalog: documentation; tags: api, docs, maintenance; best fit: teams with hand-written API references."
+    "briefLabel": "Community Task brief *",
+    "briefHint": "Include the objective, user value, inputs and constraints, execution and quality requirements, acceptance criteria, and optional publication notes.",
+    "briefPlaceholder": "Objective and user value:\nInputs and constraints:\nExecution behavior and quality:\nAcceptance criteria:\nPublication notes (optional):"
   },
   "status": {
     "resolvingUpstream": "Resolving upstream repository...",
@@ -52,7 +40,7 @@
     "creatingPullRequest": "Creating pull request..."
   },
   "errors": {
-    "missingRequiredFields": "Fill in the task name, objective, input constraints, quality requirements, and acceptance criteria before submitting.",
+    "missingRequiredFields": "Fill in the task name and the Community Task brief before submitting.",
     "ghNotAvailable": "The GitHub CLI (gh) is required. Install it and run gh auth login before dispatching this task.",
     "ghNotAuthenticated": "gh is not authenticated. Run gh auth login, then dispatch the task again.",
     "forkUnavailable": "Your account cannot fork the upstream Community Packages repository. Check organization policy or repository permissions.",
