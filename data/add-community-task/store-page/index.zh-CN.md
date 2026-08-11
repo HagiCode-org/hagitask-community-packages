@@ -2,7 +2,7 @@
 locale: zh-CN
 slug: add-community-task
 title: Add Community Task
-summary: 把 Community Task 创作收敛成一个结构化任务：收集说明、生成全部必需的包文件、真实执行校验，并从你自己的 GitHub fork 创建 Pull Request。
+summary: 在一个集中说明中收集 Community Task 意图，由提示词完成结构化整理，生成全部必需的包文件，真实执行校验，并从你自己的 GitHub fork 创建 Pull Request。
 eyebrow: Task Preset 商店
 status: experimental
 primaryCtaLabel: 安装 task preset
@@ -27,9 +27,9 @@ Add Community Task 面向想要发布 HagiTask Community Task、但不想手工�
 
 ## 它做什么
 
-### 生成之前先收集真实说明
+### 生成之前先收集一份完整说明
 
-面板强制要求填写目标、新任务需要收集的输入字段、必须执行的行为与质量规则，以及判断执行是否成功的验收标准。这四项回答决定了产出是一个可用的包还是一具空壳，因此它们是必填而不是可选。
+面板提供一个必填的多行说明区域，用于集中描述目标、用户价值、输入约束、执行与质量规则、验收标准以及可选发布说明。提示词会先从这段连续说明中提炼和结构化信息，再生成包文件，因此不需要把同一意图拆到多个文本框。
 
 ### 只在你的 fork 中写入
 

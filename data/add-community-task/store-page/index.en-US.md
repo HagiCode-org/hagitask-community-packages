@@ -2,7 +2,7 @@
 locale: en-US
 slug: add-community-task
 title: Add Community Task
-summary: Turns Community Task authoring into a structured task - collect the brief, generate every required package file, validate it for real, and open a pull request from your own GitHub fork.
+summary: Collect one complete Community Task brief, structure it with the prompt, generate every required package file, validate it for real, and open a pull request from your own GitHub fork.
 eyebrow: Task Preset Store
 status: experimental
 primaryCtaLabel: Install task preset
@@ -27,9 +27,9 @@ This task front-loads the format into the panel and the prompt, then carries the
 
 ## What it does
 
-### Collects a real brief before generating anything
+### Collects one complete brief before generating anything
 
-The panel requires the objective, the input fields the new task should collect, the execution and quality rules it must enforce, and the acceptance criteria that decide whether a run succeeded. Those four answers are what separate a usable package from an empty skeleton, so they are required rather than optional.
+The panel provides one required multiline brief for the objective, user value, input constraints, execution and quality rules, acceptance criteria, and optional publication notes. The prompt extracts and structures that continuous explanation before generating the package, so authors do not have to split one idea across multiple text boxes.
 
 ### Writes only inside your fork
 
