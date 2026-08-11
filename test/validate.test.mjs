@@ -125,6 +125,10 @@ function taskPreset() {
   );
 }
 
+function taskPresetWithSource(source) {
+  return taskPreset().replace('"owner-project-repositories"', JSON.stringify(source));
+}
+
 function prompts() {
   return JSON.stringify(
     {
@@ -230,6 +234,36 @@ test('valid package passes with no errors', () => {
   const { packages, errors } = validateCommunityPackages(root);
   assert.ok(errors.length === 0, `expected no errors, got:\n${errors.map((e) => e.message).join('\n')}`);
   assert.ok(packages.includes('data/good-pkg'));
+});
+
+for (const source of ['owner-project-repositories', 'vault-registry', 'project-registry']) {
+  test(`valid package accepts ${source} target scope source`, () => {
+    const id = `scope-${source.replaceAll('-', '')}`;
+    const files = validPackageFiles(id);
+    files['backend/task-preset.json'] = taskPresetWithSource(source);
+    writePackage(id, files);
+    const { errors } = validateCommunityPackages(root);
+    assert.deepEqual(
+      errors.filter((error) => error.packageId === `data/${id}`),
+      [],
+    );
+  });
+}
+
+test('unknown target scope source is reported with selection details', () => {
+  const id = 'unknown-scope';
+  const files = validPackageFiles(id);
+  files['backend/task-preset.json'] = taskPresetWithSource('unknown-registry');
+  writePackage(id, files);
+  const { errors } = validateCommunityPackages(root);
+  const hit = errors.find(
+    (error) =>
+      error.packageId === `data/${id}`
+      && error.file.endsWith('/backend/task-preset.json')
+      && error.field.includes('targetRepositories')
+      && error.message.includes('unknown-registry'),
+  );
+  assert.ok(hit, 'expected an unsupported target scope source error');
 });
 
 test('invalid JSON is reported as a parse failure', () => {

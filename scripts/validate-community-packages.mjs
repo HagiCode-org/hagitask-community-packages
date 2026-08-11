@@ -32,6 +32,11 @@ import Ajv from 'ajv/dist/2020.js';
 const DATA_DIR = 'data';
 const SCHEMA_DIR = join('hagitask', 'schemas', 'task-preset-plugin');
 const TASK_PRESET_ID_PATTERN = /^[a-z0-9][a-z0-9-]*$/;
+const SUPPORTED_TARGET_SCOPE_SOURCES = new Set([
+  'owner-project-repositories',
+  'vault-registry',
+  'project-registry',
+]);
 
 /**
  * @typedef {Object} ValidationError
@@ -207,6 +212,29 @@ function validatePackage(pkg, repoRoot, validator) {
           const loc = e.instancePath || '';
           const detail = e.params && e.params.allowedValues ? ` (${e.params.allowedValues.join(', ')})` : '';
           add(jf, `schema:${fileName}${loc}`, `${e.message}${detail}`);
+        }
+      }
+    }
+  }
+
+  // --- 1.5 enabled task target scope sources ---
+  const taskPresetPath = manifest.backend?.taskPreset;
+  if (typeof taskPresetPath === 'string' && taskPresetPath.length > 0) {
+    const taskPresetAbs = resolve(pkg.dir, taskPresetPath);
+    const taskPresetRes = readJsonSafe(taskPresetAbs);
+    if (taskPresetRes.ok && taskPresetRes.value && typeof taskPresetRes.value === 'object') {
+      const targets = taskPresetRes.value.targets;
+      for (const [kind, bucket] of Object.entries(targets || {})) {
+        if (!bucket || bucket.enabled !== true || !Array.isArray(bucket.selections)) continue;
+        for (const selection of bucket.selections) {
+          const source = selection?.scope?.source;
+          if (source === undefined) continue;
+          if (typeof source === 'string' && SUPPORTED_TARGET_SCOPE_SOURCES.has(source)) continue;
+          add(
+            taskPresetPath,
+            `targets.${kind}.selections[${selection?.id ?? '<unknown>'}].scope.source`,
+            `selection '${selection?.id ?? '<unknown>'}' uses unsupported scope source ${JSON.stringify(source)}`,
+          );
         }
       }
     }
