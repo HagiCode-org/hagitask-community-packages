@@ -40,9 +40,11 @@ Author a new HagiTask Community Task package and open a Pull Request that contri
 Resolve repositories by public GitHub identity only. Do not rely on the layout of the machine you are running on.
 
 - Upstream Community Packages: `https://github.com/HagiCode-org/hagitask-community-packages`
-- Read-only reference (schemas, README, shipped presets): `https://github.com/HagiCode-org/hagitask`
+- Published schema root (HTTP, no clone): `https://tasks.hagicode.com/schemas/`
 
-Confirm both with `gh repo view <OWNER/REPO> --json name,owner,defaultBranchRef,isFork` and use the returned metadata — especially the upstream default branch — for every later command. Record the resolved upstream URL, fork URL, reference URL, and default branch in your result so the run is reproducible elsewhere.
+Confirm the upstream with `gh repo view <OWNER/REPO> --json name,owner,defaultBranchRef,isFork` and use the returned metadata — especially the upstream default branch — for every later command. Record the resolved upstream URL, fork URL, and default branch in your result so the run is reproducible elsewhere.
+
+The `hagitask` repository is **not** a repository you need. Its schemas are published at the URL above; fetch them over HTTP instead.
 
 ## Local context (read-only)
 - Temporary working directory: `{{projectPath}}`
@@ -55,7 +57,7 @@ Confirm both with `gh repo view <OWNER/REPO> --json name,owner,defaultBranchRef,
 
 {{{targetScopeMarkdown}}}
 {{else}}
-No repository scope was selected. Work only from the public upstream and reference repositories.
+No repository scope was selected. Work only from the public upstream repository and the published schema root.
 {{/if}}
 
 {{#if referenceVaults}}
@@ -91,7 +93,7 @@ Selected repositories, vaults, and project references are **context only**. Ever
 ### 3. Prepare a temporary checkout
 - Clone the fork by URL into a fresh temporary directory, for example `git clone https://github.com/<fork-owner>/<repo>.git`.
 - Add the upstream as a remote and sync the default branch so the branch is not stale.
-- Run `git submodule update --init --recursive` so `hagitask/schemas/task-preset-plugin/` is present. Validation cannot resolve `$schema` references without it.
+- Run `git submodule update --init --recursive`. This is a validation prerequisite only: `npm run validate` resolves each `$schema` offline by file name against `hagitask/schemas/task-preset-plugin/`, and fails on every document when that directory is absent. You still read schema content from the published URL, not from here.
 - Run `git status --porcelain` and confirm the tree is clean. If unexpected local changes exist, stop and report them rather than overwriting user content.
 - Create a working branch, for example `git switch -c add-community-task/<task-id>`. Never commit onto the fork's default branch.
 
@@ -102,7 +104,7 @@ Selected repositories, vaults, and project references are **context only**. Ever
 ### 5. Read the reference material before writing
 - Read the Community repository `README.md` for the package layout, the `$schema` table, and the contribution rules.
 - Read the closest existing package under `data/` as a structural example.
-- Read the authoritative schemas in `hagitask/schemas/task-preset-plugin/` and the shipped presets under `hagitask/presets/`. Treat all of it as read-only.
+- Fetch each authoritative schema you are about to write against from its published URL, for example `https://tasks.hagicode.com/schemas/task-preset-plugin/manifest.schema.json`. The file name matches the table in step 6; `https://tasks.hagicode.com/schemas/` is the root for all of them.
 
 ### 6. Write the package under `data/<task-id>/`
 Create every file. A package missing any of these is incomplete:
@@ -119,8 +121,19 @@ Create every file. A package missing any of these is incomplete:
 | `locales/en-US.json`, `locales/zh-CN.json` | Identical key sets, only the natural language differs |
 | `store-page/index.en-US.md`, `index.zh-CN.md` | Frontmatter with `locale`, `slug`, `title`, `summary`, `status`, plus `catalog` and `tags` on the `en-US` page |
 
+Every JSON document above carries an absolute `$schema` URL under the published schema root. Use exactly these values — the same base for top-level and nested files, differing only by file name:
+
+| Package file | `$schema` |
+| --- | --- |
+| `manifest.json` | `https://tasks.hagicode.com/schemas/task-preset-plugin/manifest.schema.json` |
+| `frontend/panel.json` | `https://tasks.hagicode.com/schemas/task-preset-plugin/panel.schema.json` |
+| `frontend/commands.json` | `https://tasks.hagicode.com/schemas/task-preset-plugin/commands.schema.json` |
+| `backend/task-preset.json` | `https://tasks.hagicode.com/schemas/task-preset-plugin/task-preset.schema.json` |
+| `backend/prompts.json` | `https://tasks.hagicode.com/schemas/task-preset-plugin/prompt-package.schema.json` |
+| `locales/<locale>.json` | `https://tasks.hagicode.com/schemas/task-preset-plugin/locales.schema.json` |
+
 Hard rules while writing:
-- Copy the absolute GitHub raw `$schema` URLs from the Community `README.md` table verbatim. Both the top-level `manifest.json` and the nested `frontend/`, `backend/`, `locales/` files share the same base `https://raw.githubusercontent.com/HagiCode-org/hagitask/main/schemas/task-preset-plugin/<schema>.schema.json`, differing only by file name. The local validator still resolves by file name against the nested `hagitask/schemas/task-preset-plugin/` directory, so the URL and the local submodule point at the same authoritative schema.
+- Never write a `raw.githubusercontent.com` URL, a `github.com` blob URL, or a relative path into `$schema`. The published URL is the only accepted form, and the validator matches on its `schemas/task-preset-plugin/` path tail — so the public URL and the nested submodule resolve to the same authoritative schema.
 - Every path declared in the manifest must exist and must stay inside the package directory.
 - `store-page` `slug` must equal the directory name, and each file's `locale` must equal the locale in its filename.
 - `catalog` entries must be lowercase kebab-case; free-form or localized text belongs in `tags` or `badges`.
@@ -156,16 +169,16 @@ gh pr create \
   --body "<body>"
 ```
 
-- Verify the created PR's head and base with `gh pr view <number> --repo <upstream> --json headRepositoryOwner,headRefName,baseRefName,url`. The base must be the upstream Community Packages repository, never the reference `hagitask` repository and never the fork itself.
+- Verify the created PR's head and base with `gh pr view <number> --repo <upstream> --json headRepositoryOwner,headRefName,baseRefName,url`. The base must be the upstream Community Packages repository, never the `hagitask` repository and never the fork itself.
 - If PR creation fails, report the exact error and leave the pushed branch in place so the user can finish manually.
 
 ## Requirements
 1. Resolve every repository from public GitHub identity, never from a local relative path.
 2. Write only inside `data/<task-id>/` on a working branch of your fork.
 3. Treat the user's repositories, vaults, and project references as read-only context.
-4. Never modify anything under `hagitask/`.
+4. Never modify anything under `hagitask/`, and never clone the `hagitask` repository to read a schema — fetch it from `https://tasks.hagicode.com/schemas/`.
 5. Generate every required package resource; do not ship a partial package.
-6. Initialize nested submodules before validating.
+6. Initialize nested submodules before validating; the validator needs them to resolve `$schema` offline.
 7. Run the real validation commands and report their real results.
 8. Reuse an existing fork instead of creating a duplicate.
 9. Stop with actionable diagnostics on any auth, permission, or GitHub failure instead of claiming success.
@@ -180,6 +193,6 @@ A passing validator proves structure, not quality. It does not check locale key 
   2. `## Contribution result`
   3. `## Assumptions (if any)`
   4. `## Next step`
-- Under `## Contribution result`, always report: canonical task id, files created, upstream URL, fork URL (and whether it was reused or newly created), reference repository URL, upstream default branch, working branch, the exit status of each validation command, the manual review items, and the PR number and URL. If the run stopped early, state the exact blocking step and command output in place of the PR.
+- Under `## Contribution result`, always report: canonical task id, files created, upstream URL, fork URL (and whether it was reused or newly created), upstream default branch, working branch, the exit status of each validation command, the manual review items, and the PR number and URL. If the run stopped early, state the exact blocking step and command output in place of the PR.
 - Write `None` under assumptions when there are none.
 - When assumptions are needed, use this exact format: `Assumption: <one sentence>; Reason: <one sentence>; Impact: <one sentence>`.

@@ -5,15 +5,19 @@
 所有仓库一律通过公开 GitHub URL 或 `OWNER/REPO` 标识定位，不得依赖磁盘上的相对路径。
 
 - 上游 Community Packages：`https://github.com/HagiCode-org/hagitask-community-packages`
-- 只读 Schema 与 preset 参考：`https://github.com/HagiCode-org/hagitask`
 
-使用前先用 `gh repo view <OWNER/REPO>` 确认这两个标识。不要假设存在 monorepo 布局、`repos/*` 同级目录或旧版包根目录。本任务可能在任意临时工作目录中运行，运行机器可能从未接触过这两个仓库。
+使用前先用 `gh repo view <OWNER/REPO>` 确认该标识。不要假设存在 monorepo 布局、`repos/*` 同级目录或旧版包根目录。本任务可能在任意临时工作目录中运行，运行机器可能从未接触过该仓库。
+
+## 权威 Schema 来源
+所有 Schema 契约都以普通 HTTP 资源发布在 `https://tasks.hagicode.com/schemas/` 下。需要哪一份就直接从该地址读取——`https://tasks.hagicode.com/schemas/task-preset-plugin/<name>.schema.json`——并把同一个地址写入文档的 `$schema` 字段。
+
+不要为了获取 Schema 内容去 clone、fork 或浏览 `hagitask` 仓库；公开 URL 就是契约。Community checkout 内嵌套的 `hagitask/` 子模块只是为了让 `npm run validate` 能按文件名离线解析同一批 Schema。
 
 ## 写入范围
 你唯一可以新增或修改的文件是**你自己 fork** 中工作分支下的 `data/<task-id>/**`。其余内容一律只读：
 
 - 上游仓库本身（只能通过 Pull Request 贡献，禁止直接推送）
-- Community checkout 内嵌套的 `hagitask/` 子模块
+- Community checkout 内嵌套的 `hagitask/` 子模块（它是校验输入，不是创作对象）
 - 用户选择的仓库、Vault 和项目引用
 - 任何生成产物（`/index.json`、`/tasks/<taskId>.json`、`/packages/<taskId>.zip`）
 

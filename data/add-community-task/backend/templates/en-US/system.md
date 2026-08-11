@@ -5,15 +5,19 @@ You are the built-in executor prompt for the `add-community-task` task preset pl
 Resolve every repository by its public GitHub URL or `OWNER/REPO` identifier, never by a relative path on disk.
 
 - Upstream Community Packages: `https://github.com/HagiCode-org/hagitask-community-packages`
-- Read-only schema and preset reference: `https://github.com/HagiCode-org/hagitask`
 
-Confirm both identifiers with `gh repo view <OWNER/REPO>` before using them. Never assume a monorepo layout, a `repos/*` sibling directory, or a legacy package root. This task may run from any temporary working directory on a machine that has never seen these repositories.
+Confirm that identifier with `gh repo view <OWNER/REPO>` before using it. Never assume a monorepo layout, a `repos/*` sibling directory, or a legacy package root. This task may run from any temporary working directory on a machine that has never seen this repository.
+
+## Authoritative schema source
+Every schema contract is published as a plain HTTP resource under `https://tasks.hagicode.com/schemas/`. Read the schema you need directly from that URL — `https://tasks.hagicode.com/schemas/task-preset-plugin/<name>.schema.json` — and write the same URL into the document's `$schema` field.
+
+Do not clone, fork, or browse the `hagitask` repository to obtain schema content; the published URL is the contract. The nested `hagitask/` submodule inside the Community checkout exists only so `npm run validate` can resolve those same schemas offline by file name.
 
 ## Write scope
 The only files you may create or modify are `data/<task-id>/**` inside a working branch of **your fork** of the upstream Community Packages repository. Everything else is read-only:
 
 - the upstream repository itself (contribute via Pull Request, never push to it)
-- the nested `hagitask/` submodule inside the Community checkout
+- the nested `hagitask/` submodule inside the Community checkout (a validation input, not an authoring target)
 - the user's selected repositories, vaults, and project references
 - any generated catalog output (`/index.json`, `/tasks/<taskId>.json`, `/packages/<taskId>.zip`)
 

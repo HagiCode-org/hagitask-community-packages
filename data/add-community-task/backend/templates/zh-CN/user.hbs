@@ -40,9 +40,11 @@
 只通过公开 GitHub 身份定位仓库，不要依赖当前机器的目录布局。
 
 - 上游 Community Packages：`https://github.com/HagiCode-org/hagitask-community-packages`
-- 只读参考（Schema、README、内置 preset）：`https://github.com/HagiCode-org/hagitask`
+- 公开 Schema 根地址（HTTP 直取，无需 clone）：`https://tasks.hagicode.com/schemas/`
 
-先用 `gh repo view <OWNER/REPO> --json name,owner,defaultBranchRef,isFork` 确认两者，并在后续所有命令中使用返回的元数据，尤其是上游默认分支。在结果中记录解析出的 upstream URL、fork URL、参考仓库 URL 和默认分支，使该流程可以在其他环境复现。
+先用 `gh repo view <OWNER/REPO> --json name,owner,defaultBranchRef,isFork` 确认上游，并在后续所有命令中使用返回的元数据，尤其是上游默认分支。在结果中记录解析出的 upstream URL、fork URL 和默认分支，使该流程可以在其他环境复现。
+
+`hagitask` 仓库**不是**你需要的仓库。它的 Schema 已发布在上述地址，通过 HTTP 获取即可。
 
 ## 本地上下文（只读）
 - 临时工作目录：`{{projectPath}}`
@@ -55,7 +57,7 @@
 
 {{{targetScopeMarkdown}}}
 {{else}}
-未选择仓库范围。只使用公开的上游仓库与参考仓库开展工作。
+未选择仓库范围。只使用公开的上游仓库与公开 Schema 根地址开展工作。
 {{/if}}
 
 {{#if referenceVaults}}
@@ -91,7 +93,7 @@
 ### 3. 准备临时 checkout
 - 通过 URL 把 fork clone 到全新的临时目录，例如 `git clone https://github.com/<fork-owner>/<repo>.git`。
 - 添加 upstream remote 并同步默认分支，避免基于过期分支工作。
-- 运行 `git submodule update --init --recursive`，确保 `hagitask/schemas/task-preset-plugin/` 存在。缺少它时校验无法解析 `$schema`。
+- 运行 `git submodule update --init --recursive`。这一步只是校验的前置条件：`npm run validate` 会按文件名在 `hagitask/schemas/task-preset-plugin/` 下离线解析每个 `$schema`，该目录缺失时所有文档都会校验失败。Schema 内容仍然从公开 URL 读取，不从这里读。
 - 运行 `git status --porcelain` 确认工作树干净。若存在预期之外的本地改动，停止并报告，不要覆盖用户内容。
 - 创建工作分支，例如 `git switch -c add-community-task/<task-id>`。不要在 fork 的默认分支上提交。
 
@@ -102,7 +104,7 @@
 ### 5. 先阅读参考资料再动手
 - 阅读 Community 仓库 `README.md`，掌握包布局、`$schema` 对照表和贡献规则。
 - 阅读 `data/` 下结构最接近的既有包作为范例。
-- 阅读 `hagitask/schemas/task-preset-plugin/` 中的权威 Schema 与 `hagitask/presets/` 下的内置 preset。这些内容全部只读。
+- 从公开地址拉取即将使用的每一份权威 Schema，例如 `https://tasks.hagicode.com/schemas/task-preset-plugin/manifest.schema.json`。文件名与第 6 步的对照表一致，`https://tasks.hagicode.com/schemas/` 是它们共同的根地址。
 
 ### 6. 在 `data/<task-id>/` 下编写包
 创建全部文件。缺少其中任何一项都视为包不完整：
@@ -119,9 +121,20 @@
 | `locales/en-US.json`、`locales/zh-CN.json` | key 集合完全一致，仅自然语言不同 |
 | `store-page/index.en-US.md`、`index.zh-CN.md` | frontmatter 含 `locale`、`slug`、`title`、`summary`、`status`，并在 `en-US` 页补充 `catalog` 与 `tags` |
 
+上表中每个 JSON 文档都要带上公开 Schema 根地址下的绝对 `$schema` URL。顶层文件与嵌套文件使用同一段基础地址，仅文件名不同，取值必须与下表完全一致：
+
+| 包内文件 | `$schema` |
+| --- | --- |
+| `manifest.json` | `https://tasks.hagicode.com/schemas/task-preset-plugin/manifest.schema.json` |
+| `frontend/panel.json` | `https://tasks.hagicode.com/schemas/task-preset-plugin/panel.schema.json` |
+| `frontend/commands.json` | `https://tasks.hagicode.com/schemas/task-preset-plugin/commands.schema.json` |
+| `backend/task-preset.json` | `https://tasks.hagicode.com/schemas/task-preset-plugin/task-preset.schema.json` |
+| `backend/prompts.json` | `https://tasks.hagicode.com/schemas/task-preset-plugin/prompt-package.schema.json` |
+| `locales/<locale>.json` | `https://tasks.hagicode.com/schemas/task-preset-plugin/locales.schema.json` |
+
 编写时的硬性规则：
 
-- 逐字照抄 Community `README.md` 中 `$schema` 对照表的绝对 GitHub raw URL：`manifest.json` 等顶层文件与 `frontend/`、`backend/`、`locales/` 下的嵌套文件都使用同一段 `https://raw.githubusercontent.com/HagiCode-org/hagitask/main/schemas/task-preset-plugin/<schema>.schema.json` 基础地址，仅文件名不同。本地校验器仍按文件名解析到嵌套的 `hagitask/schemas/task-preset-plugin/` 目录，URL 与本地子模块指向同一份权威 Schema。
+- 绝不能把 `raw.githubusercontent.com` 地址、`github.com` blob 地址或相对路径写进 `$schema`。公开 URL 是唯一被接受的形式；校验器按其 `schemas/task-preset-plugin/` 路径尾部匹配，因此公开 URL 与嵌套子模块解析到同一份权威 Schema。
 - manifest 声明的每个路径都必须真实存在，且必须位于包目录之内。
 - `store-page` 的 `slug` 必须等于目录名，每个文件的 `locale` 必须与文件名中的 locale 一致。
 - `catalog` 条目必须是小写 kebab-case；自由文本或本地化文案放进 `tags` 或 `badges`。
@@ -157,16 +170,16 @@ gh pr create \
   --body "<body>"
 ```
 
-- 用 `gh pr view <number> --repo <upstream> --json headRepositoryOwner,headRefName,baseRefName,url` 校验 head 与 base。base 必须是上游 Community Packages 仓库，不能是参考用的 `hagitask` 仓库，也不能是 fork 自身。
+- 用 `gh pr view <number> --repo <upstream> --json headRepositoryOwner,headRefName,baseRefName,url` 校验 head 与 base。base 必须是上游 Community Packages 仓库，不能是 `hagitask` 仓库，也不能是 fork 自身。
 - 若创建 PR 失败，输出准确的错误信息，并保留已推送的分支，便于用户手动完成。
 
 ## 要求
 1. 一律通过公开 GitHub 身份定位仓库，不使用本地相对路径。
 2. 只在 fork 工作分支的 `data/<task-id>/` 内写入。
 3. 用户的仓库、Vault 和项目引用一律视为只读上下文。
-4. 不修改 `hagitask/` 下的任何内容。
+4. 不修改 `hagitask/` 下的任何内容，也不为了读取 Schema 去 clone `hagitask` 仓库——统一从 `https://tasks.hagicode.com/schemas/` 获取。
 5. 生成全部必需的包资源，不交付半成品。
-6. 校验前先初始化嵌套子模块。
+6. 校验前先初始化嵌套子模块；校验器需要它来离线解析 `$schema`。
 7. 运行真实的校验命令并如实报告结果。
 8. 复用已有 fork，不重复创建。
 9. 遇到登录、权限或 GitHub 操作失败时，停在带可执行诊断的阻塞状态，不得谎报成功。
@@ -181,6 +194,6 @@ gh pr create \
   2. `## Contribution result`
   3. `## Assumptions (if any)`
   4. `## Next step`
-- 在 `## Contribution result` 中必须报告：canonical task id、创建的文件、upstream URL、fork URL（以及是复用还是新建）、参考仓库 URL、上游默认分支、工作分支、各校验命令的退出状态、人工审阅项，以及 PR 编号与 URL。若流程提前终止，用准确的阻塞步骤和命令输出替代 PR 信息。
+- 在 `## Contribution result` 中必须报告：canonical task id、创建的文件、upstream URL、fork URL（以及是复用还是新建）、上游默认分支、工作分支、各校验命令的退出状态、人工审阅项，以及 PR 编号与 URL。若流程提前终止，用准确的阻塞步骤和命令输出替代 PR 信息。
 - 没有假设时在假设小节写 `None`。
 - 需要假设时使用该固定格式：`Assumption: <一句话>; Reason: <一句话>; Impact: <一句话>`。
