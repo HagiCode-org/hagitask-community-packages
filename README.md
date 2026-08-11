@@ -87,6 +87,10 @@ npm test
 Fix validation errors in `data/<taskId>/`. Do not remove `$schema` references, relax the
 contract locally, or patch generated output.
 
+Enabled task target selections may use `owner-project-repositories`, `vault-registry`, or
+`project-registry`. Unknown scope sources fail validation with a selection-specific diagnostic
+before publication.
+
 ## Rules
 
 - This repository is the only source of truth for community task definitions.
