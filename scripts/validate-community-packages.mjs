@@ -355,6 +355,15 @@ function validatePackage(pkg, repoRoot, validator) {
             if (lp.developerTemplate) refs.add(lp.developerTemplate);
           }
         }
+        if (prompts.commandSystemPrompts && typeof prompts.commandSystemPrompts === 'object') {
+          for (const localeTemplates of Object.values(prompts.commandSystemPrompts)) {
+            if (localeTemplates && typeof localeTemplates === 'object' && !Array.isArray(localeTemplates)) {
+              for (const tpl of Object.values(localeTemplates)) {
+                if (typeof tpl === 'string' && tpl.trim()) refs.add(tpl);
+              }
+            }
+          }
+        }
         // Template references are relative to the prompts.json file location.
         const promptsDir = dirname(promptsAbs);
         for (const tpl of refs) {

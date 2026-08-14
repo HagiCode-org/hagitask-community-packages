@@ -404,6 +404,7 @@ test('discovers the canonical community tasks under data/ and nothing at the rep
     'data/add-community-task',
     'data/claude-md-update',
     'data/goal',
+    'data/hagicode-monospecs-operations',
     'data/last30days',
     'data/openspec-spec-compress',
     'data/ponytail',
