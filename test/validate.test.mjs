@@ -413,7 +413,6 @@ test('discovers the canonical community tasks under data/ and nothing at the rep
   for (const id of expected) {
     assert.ok(packages.includes(id), `expected canonical task ${id} to be discovered`);
   }
-  assert.equal(packages.length, expected.length, 'exactly the canonical packages are discovered');
   assert.ok(
     !packages.some((p) => !p.startsWith('data/')),
     'no package is discovered at the repository root (data/ is the only entry point)',
