@@ -402,7 +402,7 @@ test('discovers the canonical community tasks under data/ and nothing at the rep
   const { packages } = validateCommunityPackages(repoRoot);
   const expected = [
     'data/add-community-task',
-    'data/claude-md-update',
+    'data/agents-md-update',
     'data/goal',
     'data/hagicode-monospecs-operations',
     'data/last30days',
