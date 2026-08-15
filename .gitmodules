@@ -1,8 +1,0 @@
-# Nested submodule: HagiTask is the authoritative schema source for Community
-# packages. Community validation resolves every package `$schema` reference from
-# hagitask/schemas/task-preset-plugin/. The pinned commit below is advanced
-# together with any Community change that depends on a new schema revision.
-[submodule "hagitask"]
-	path = hagitask
-	url = https://github.com/HagiCode-org/hagitask.git
-	branch = main

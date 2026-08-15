@@ -5,11 +5,11 @@
   "type": "module",
   "description": "HagiTask community task preset packages and their submission validation tooling.",
   "scripts": {
-    "validate": "node scripts/validate-community-packages.mjs",
+    "validate": "hagitask validate .",
     "test": "node --test"
   },
   "devDependencies": {
-    "ajv": "^8.17.1"
+    "@hagicode/hagitask": "0.1.2"
   },
   "engines": {
     "node": ">=22.12.0"
