@@ -1,0 +1,66 @@
+{
+  "$schema": "https://tasks.hagicode.com/schemas/task-preset-plugin/prompt-package.schema.json",
+  "version": "1.0.0",
+  "templateEngine": "handlebars",
+  "defaultLocale": "en-US",
+  "supportedLocales": [
+    "en-US",
+    "zh-CN"
+  ],
+  "inputs": [
+    {
+      "name": "projectPath",
+      "source": "system",
+      "required": true,
+      "description": "Absolute path to the selected project root."
+    },
+    {
+      "name": "projectName",
+      "source": "computed-context",
+      "required": true,
+      "description": "Display name of the selected project."
+    },
+    {
+      "name": "targetRepositories",
+      "source": "computed-context",
+      "description": "Optional normalized repositories selected within the project."
+    },
+    { "name": "command", "source": "task-preset-input", "required": true },
+    { "name": "includeClaudeMd", "source": "task-preset-input", "required": true },
+    { "name": "agentsInclude", "source": "task-preset-input" },
+    { "name": "agentsExclude", "source": "task-preset-input" },
+    {
+      "name": "operationBrief",
+      "source": "task-preset-input",
+      "description": "Operation objective and acceptance criteria."
+    }
+  ],
+  "rendering": {
+    "strictVariables": false,
+    "trimBlocks": true
+  },
+  "locales": {
+    "en-US": {
+      "systemTemplate": "./templates/en-US/system.md",
+      "userTemplate": "./templates/en-US/user.hbs"
+    },
+    "zh-CN": {
+      "systemTemplate": "./templates/zh-CN/system.md",
+      "userTemplate": "./templates/zh-CN/user.hbs"
+    }
+  },
+  "commandSystemPrompts": {
+    "new": {
+      "en-US": "./templates/en-US/commands/new.md",
+      "zh-CN": "./templates/zh-CN/commands/new.md"
+    },
+    "incresement update": {
+      "en-US": "./templates/en-US/commands/incresement-update.md",
+      "zh-CN": "./templates/zh-CN/commands/incresement-update.md"
+    },
+    "shrink": {
+      "en-US": "./templates/en-US/commands/shrink.md",
+      "zh-CN": "./templates/zh-CN/commands/shrink.md"
+    }
+  }
+}
