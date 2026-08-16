@@ -3,7 +3,7 @@
   "taskPreset": {
     "displayName": "Ponytail",
     "title": "Create Ponytail Task",
-    "description": "Queue a structured Ponytail task preset with command-based mode selection, repository scope, and skill-first execution.",
+    "description": "Queue a structured Ponytail task with command-based modes, explicit repository scope, and a skill-first path that resists unnecessary complexity.",
     "defaultTitle": "New Ponytail Task",
     "submit": "Create Ponytail Task",
     "submitting": "Queueing Ponytail task..."

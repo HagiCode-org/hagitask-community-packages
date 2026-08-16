@@ -3,7 +3,7 @@
   "taskPreset": {
     "displayName": "Ponytail",
     "title": "创建 Ponytail 任务",
-    "description": "排队创建结构化的 Ponytail 任务预设，提供基于命令的模式选择、仓库范围和技能优先执行。",
+    "description": "创建结构化的 Ponytail 任务，提供命令模式、明确仓库范围，并以技能优先的最短路径避免不必要的复杂度。",
     "defaultTitle": "新建 Ponytail 任务",
     "submit": "创建 Ponytail 任务",
     "submitting": "正在排队 Ponytail 任务..."
