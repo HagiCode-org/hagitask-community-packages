@@ -3,7 +3,7 @@
   "taskPreset": {
     "displayName": "HagiCode MonoSpecs 操作",
     "title": "管理 HagiCode MonoSpecs",
-    "description": "初始化配置、添加仓库或按活跃状态调整 MonoSpecs 仓库顺序。",
+    "description": "安全初始化 MonoSpecs 配置、从绝对 URL 添加仓库，或预览并确认按活跃状态调整仓库顺序。",
     "defaultTitle": "新的 MonoSpecs 操作",
     "submit": "创建操作任务",
     "submitting": "正在提交 MonoSpecs 操作..."

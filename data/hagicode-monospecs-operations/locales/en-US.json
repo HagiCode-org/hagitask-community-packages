@@ -3,7 +3,7 @@
   "taskPreset": {
     "displayName": "HagiCode MonoSpecs Operations",
     "title": "Manage HagiCode MonoSpecs",
-    "description": "Initialize configuration, add repositories, or reorder MonoSpecs repositories by activity.",
+    "description": "Safely initialize MonoSpecs configuration, add repositories from absolute URLs, or preview and confirm activity-based repository reordering.",
     "defaultTitle": "New MonoSpecs operation",
     "submit": "Create operation task",
     "submitting": "Submitting MonoSpecs operation..."
