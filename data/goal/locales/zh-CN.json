@@ -3,7 +3,7 @@
   "taskPreset": {
     "displayName": "Goal",
     "title": "创建 Goal 任务",
-    "description": "创建一个带仓库范围与兼容英雄过滤的持续工作 Goal 任务。",
+    "description": "创建一个目标明确、带仓库范围，并仅路由到兼容 Claude 或 Codex 英雄的持续工作 Goal 任务。",
     "defaultTitle": "新 Goal 任务",
     "submit": "创建 Goal 任务",
     "submitting": "正在排队 Goal 任务..."

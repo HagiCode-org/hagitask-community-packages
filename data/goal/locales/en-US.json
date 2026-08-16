@@ -3,7 +3,7 @@
   "taskPreset": {
     "displayName": "Goal",
     "title": "Create Goal Task",
-    "description": "Queue a sustained-work goal task with repository scope and compatible hero filtering.",
+    "description": "Queue a sustained-work goal with an explicit objective, repository scope, and filtering to compatible Claude or Codex heroes.",
     "defaultTitle": "New Goal Task",
     "submit": "Create Goal Task",
     "submitting": "Queueing goal task..."
