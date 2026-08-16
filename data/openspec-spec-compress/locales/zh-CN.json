@@ -3,7 +3,7 @@
   "taskPreset": {
     "displayName": "OpenSpec Spec Compress",
     "title": "创建 OpenSpec Spec Compress 任务",
-    "description": "提交一个结构化的 OpenSpec spec 压缩清理任务，内置文档化 guardrails 与非交互默认策略。",
+    "description": "提交一个结构化的 OpenSpec spec 压缩清理任务，明确写入边界，内置文档化护栏、增量校验与非交互默认策略。",
     "defaultTitle": "新的 OpenSpec Spec Compress 任务",
     "submit": "创建 OpenSpec Spec Compress 任务",
     "submitting": "正在提交 OpenSpec spec 压缩任务..."

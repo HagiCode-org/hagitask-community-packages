@@ -3,7 +3,7 @@
   "taskPreset": {
     "displayName": "OpenSpec Spec Compress",
     "title": "Create OpenSpec Spec Compress Task",
-    "description": "Queue a structured OpenSpec spec compression cleanup task with documented guardrails and non-interactive defaults.",
+    "description": "Queue a structured OpenSpec spec-compression cleanup with explicit write boundaries, documented guardrails, incremental validation, and non-interactive defaults.",
     "defaultTitle": "New OpenSpec Spec Compress Task",
     "submit": "Create OpenSpec Spec Compress Task",
     "submitting": "Queueing OpenSpec spec compression task..."
