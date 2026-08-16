@@ -3,7 +3,7 @@
   "taskPreset": {
     "displayName": "UI Master",
     "title": "Create UI Master Task",
-    "description": "Queue a structured UI Master task preset with grouped commands, repository scope, and scene defaults.",
+    "description": "Queue a structured UI Master task with grouped interface commands, explicit repository scope, and scene-aware execution defaults.",
     "defaultTitle": "New UI Master Task",
     "submit": "Create UI Master Task",
     "submitting": "Queueing UI Master task..."

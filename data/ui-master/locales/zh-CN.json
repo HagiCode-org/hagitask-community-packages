@@ -3,7 +3,7 @@
   "taskPreset": {
     "displayName": "UI Master",
     "title": "创建 UI Master 任务",
-    "description": "提交一个结构化的 UI Master task preset，统一承载命令分组、仓库范围和 scene 默认值。",
+    "description": "提交一个结构化的 UI Master 任务，统一承载界面命令分组、明确仓库范围与场景感知的执行默认值。",
     "defaultTitle": "新的 UI Master 任务",
     "submit": "创建 UI Master 任务",
     "submitting": "正在提交 UI Master 任务..."
