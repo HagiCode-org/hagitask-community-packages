@@ -3,7 +3,7 @@
   "schemaVersion": "1.0",
   "taskPresetId": "goal",
   "version": "1.0.0",
-  "icon": "flag",
+  "icon": "target",
   "displayName": {
     "key": "taskPreset.displayName"
   },

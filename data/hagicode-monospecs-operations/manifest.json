@@ -3,7 +3,7 @@
   "schemaVersion": "1.0",
   "taskPresetId": "hagicode-monospecs-operations",
   "version": "1.0.0",
-  "icon": "list-settings",
+  "icon": "file-text",
   "displayName": { "key": "taskPreset.displayName" },
   "description": { "key": "taskPreset.description" },
   "kind": "custom-executor",
