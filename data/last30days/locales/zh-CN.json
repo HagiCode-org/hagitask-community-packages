@@ -3,7 +3,7 @@
   "taskPreset": {
     "displayName": "last30days",
     "title": "创建 last30days 任务",
-    "description": "提交一个结构化的 last30days 研究 task preset，统一承载模式感知的查询塑形和明确的仓库范围。",
+    "description": "提交一个结构化的 last30days 研究任务，先选择研究模式并塑形查询，同时明确仓库范围并优先使用对应 skill。",
     "defaultTitle": "新的 last30days 任务",
     "submit": "创建 last30days 任务",
     "submitting": "正在提交 last30days 任务..."

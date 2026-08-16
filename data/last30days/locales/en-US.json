@@ -3,7 +3,7 @@
   "taskPreset": {
     "displayName": "last30days",
     "title": "Create last30days Task",
-    "description": "Queue a structured last30days research preset with mode-aware query shaping and explicit repository scope.",
+    "description": "Queue a structured last30days research task with a selected research mode, shaped query, explicit repository scope, and skill-first execution.",
     "defaultTitle": "New last30days Task",
     "submit": "Create last30days Task",
     "submitting": "Queueing last30days task..."
