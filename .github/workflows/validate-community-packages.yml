@@ -1,21 +1,14 @@
 name: Validate Community Packages
 
-# Submits a required check (`validate-packages`) for pull requests that change
-# package content, and re-validates the whole catalog on `main` pushes.
+# Submits a required check (`validate-packages`) for every pull request, and
+# re-validates the whole catalog on `main` pushes.
 # A required status check on this job name protects the default branch.
 on:
   pull_request:
-    paths:
-      - "data/**"
-      - "**/manifest.json"
-      - "**/backend/**"
-      - "**/frontend/**"
-      - "**/locales/**"
-      - "**/store-page/**"
-      - "test/**"
-      - "package.json"
-      - "package-lock.json"
-      - ".github/workflows/validate-community-packages.yml"
+    types:
+      - opened
+      - synchronize
+      - reopened
   push:
     branches:
       - main
