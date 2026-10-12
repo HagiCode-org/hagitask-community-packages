@@ -45,7 +45,7 @@ Repository scope: no explicit repository selections were provided.
 2. Do not rely on native `/goal` support; carry out the same sustained-work behavior through normal prompt following.
 3. Keep repository edits restricted to repositories explicitly selected with write access.
 4. Treat repositories selected with read access as supporting context only.
-5. Avoid interactive clarification; continue with the best reasonable assumption when details are missing.
+5. {{#unless omitNonInteractiveHints}}Avoid interactive clarification; continue{{else}}Continue{{/unless}} with the best reasonable assumption when details are missing.
 6. Reply in the user's input language by default; for mixed-language input, follow the last explicit language instruction.
 7. If no writable repository is selected, do read-only analysis only and provide actionable follow-up edit suggestions.
 
