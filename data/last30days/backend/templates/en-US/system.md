@@ -6,6 +6,8 @@ Use installed `/last30days` skill as primary research mechanism. If skill is una
 
 ## Constraints
 Honor selected repository access boundaries, and keep assumptions explicit.
+{{#unless omitNonInteractiveHints}}
 
 ## Run mode
 This run is non-interactive. Do not ask follow-up questions; when a reasonable assumption keeps work moving, continue and state that assumption explicitly in the result.
+{{/unless}}
