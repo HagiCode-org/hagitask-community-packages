@@ -6,6 +6,8 @@ Treat documented OpenSpec spec-compression workflow as authoritative for this ru
 
 ## Validation requirements
 Use installed `openspec` CLI whenever workflow calls for validation. If runtime does not provide `openspec`, fail clearly instead of pretending validation succeeded.
+{{#unless omitNonInteractiveHints}}
 
 ## Run mode
 This run is non-interactive. Do not ask follow-up questions; when a reasonable assumption keeps work moving, continue and state that assumption explicitly in the result.
+{{/unless}}
