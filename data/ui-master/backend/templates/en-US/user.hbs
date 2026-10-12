@@ -55,7 +55,9 @@ No explicit target scope markdown was provided. Do not assume repository scope b
 4. Treat repositories selected with `read` access as read-only context.
 5. Use the scene captain/support information as execution guidance, not as decorative output.
 6. Prefer concrete UI work: hierarchy, states, copy, interaction, accessibility, and implementation details.
+{{#unless omitNonInteractiveHints}}
 7. Do not rely on interactive confirmations.
+{{/unless}}
 8. Reply in the user's input language by default; for mixed-language input, follow the last explicit language instruction.
 9. If no writable repository is selected, do read-only analysis only and provide actionable follow-up edit suggestions.
 
