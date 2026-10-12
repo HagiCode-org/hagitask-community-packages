@@ -6,6 +6,8 @@ Command prelude above resolves installed ponytail skill that matches selected co
 
 ## Constraints
 If referenced skill is unavailable, report that explicitly instead of silently falling back to weaker workflow. Honor selected repository access boundaries, and keep assumptions explicit.
+{{#unless omitNonInteractiveHints}}
 
 ## Run mode
 This run is non-interactive. Do not ask follow-up questions; when a reasonable assumption keeps work moving, continue and state that assumption explicitly in the result.
+{{/unless}}
