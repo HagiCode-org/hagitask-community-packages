@@ -51,7 +51,7 @@ No explicit repository scope markdown was provided. Treat repositories outside t
 11. Do not force mechanical fixes for content-level issues that require manual requirement authoring, such as missing `SHALL` / `MUST`, missing `Scenario`, or large semantic spec redesign.
 12. Keep file edits restricted to repositories selected with `write` access.
 13. Treat repositories selected with `read` access as read-only context.
-14. Do not ask follow-up questions in non-interactive runs; make a reasonable assumption and record it instead.
+14. {{#unless omitNonInteractiveHints}}Do not ask follow-up questions in non-interactive runs; make a reasonable assumption and record it instead.{{else}}When details are missing, make a reasonable assumption and record it.{{/unless}}
 15. Reply in the user's input language by default; for mixed-language input, follow the last explicit language instruction.
 16. If no writable repository is selected, do read-only analysis only and provide actionable follow-up edit suggestions.
 
