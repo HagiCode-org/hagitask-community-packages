@@ -50,7 +50,7 @@ No explicit repository scope markdown was provided. Treat repositories outside t
 4. Keep all file edits restricted to repositories selected with `write` access.
 5. Treat repositories selected with `read` access as read-only context.
 6. Do not modify repositories that were not selected.
-7. Do not ask follow-up questions in non-interactive runs; make a reasonable assumption and record it instead.
+7. {{#unless omitNonInteractiveHints}}Do not ask follow-up questions in non-interactive runs; make a reasonable assumption and record it instead.{{else}}When details are missing, make a reasonable assumption and record it.{{/unless}}
 8. Respect critical concerns even under ponytail simplification: trust-boundary validation, data-loss prevention, security controls, and accessibility basics.
 9. If the selected ponytail skill is missing, fail clearly and name the missing skill.
 10. Reply in the user's input language by default; for mixed-language input, follow the last explicit language instruction.
