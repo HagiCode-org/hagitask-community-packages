@@ -6,6 +6,8 @@ This agent may not support native `/goal` commands. Treat any leading `/goal ...
 
 ## Execution boundary
 Run in sustained-work mode using provided project path and repository scope as authoritative working boundary.
+{{#unless omitNonInteractiveHints}}
 
 ## Run mode
 This run is non-interactive. Do not ask follow-up questions; when a reasonable assumption keeps work moving, continue and state that assumption explicitly in the result.
+{{/unless}}
