@@ -49,7 +49,7 @@ No explicit repository scope markdown was provided. Treat repositories outside t
 4. Keep all file edits restricted to repositories selected with `write` access.
 5. Treat repositories selected with `read` access as read-only context.
 6. Do not modify repositories that were not selected.
-7. Do not ask follow-up questions in non-interactive runs; make a reasonable assumption and record it instead.
+7. {{#unless omitNonInteractiveHints}}Do not ask follow-up questions in non-interactive runs; make a reasonable assumption and record it instead.{{else}}When details are missing, make a reasonable assumption and record it.{{/unless}}
 8. Relate the findings back to the selected repositories and any framing included in the query.
 9. If the `/last30days` skill is missing, fail clearly and explain what is unavailable.
 10. Reply in the user's input language by default; for mixed-language input, follow the last explicit language instruction.
