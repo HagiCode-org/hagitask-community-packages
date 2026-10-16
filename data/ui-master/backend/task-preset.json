@@ -11,18 +11,6 @@
     {
       "type": "skills",
       "name": "impeccable"
-    },
-    {
-      "type": "cli",
-      "name": "impeccable",
-      "command": "npm",
-      "args": [
-        "exec",
-        "--offline",
-        "--",
-        "impeccable",
-        "--help"
-      ]
     }
   ],
   "scene": {
