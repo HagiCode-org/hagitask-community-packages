@@ -1,5 +1,8 @@
 # hagitask-community-packages
 
+[![last commit](https://img.shields.io/github/last-commit/HagiCode-org/hagitask-community-packages)](https://github.com/HagiCode-org/hagitask-community-packages/commits/main)
+[![website](https://img.shields.io/website?url=https%3A%2F%2Fdocs.hagicode.com%2Fguides%2Fhagitask%2Fcommunity%2F&label=website)](https://docs.hagicode.com/guides/hagitask/community/)
+
 Source of truth for the public HagiTask community task definitions.
 
 The user-facing contribution walkthrough is maintained in the
