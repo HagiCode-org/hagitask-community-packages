@@ -23,6 +23,8 @@ npm test
 
 Fix validator diagnostics in the authored package; do not relax schemas or patch generated output.
 
+Node.js 24+ is required (`engines`; CI runs Node 24). `.github/workflows/validate-community-packages.yml` runs `npm ci`, `npm run validate`, and `npm test` (`test/validate.test.mjs`); keep local runs equivalent. `validate` is `hagitask validate .` from the pinned `@hagicode/hagitask` devDependency.
+
 ## Conventions
 
 - Keep each package's directory name and `manifest.json.taskPresetId` aligned.
