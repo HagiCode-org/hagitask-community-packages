@@ -12,7 +12,6 @@ repositories:
     url: https://github.com/owner/repository
     path: repos/repository
     displayName: Repository
-    icon: "📦"
     tags: []
     ui:
       collapseToMore: false
