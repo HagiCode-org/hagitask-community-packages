@@ -12,33 +12,42 @@
 在所选项目中执行一次结构化的 OpenSpec spec 压缩任务。
 
 ## 执行上下文
-- 工作目录：`{{projectPath}}`
-{{#if repositoryPath}}- 解析后的仓库提示：`{{repositoryPath}}`
+- 工作目录：`{{{projectPath}}}`
+{{#if repositoryPath}}
+- 解析后的仓库提示：`{{{repositoryPath}}}`
 {{/if}}
-- 已选命令：
-{{#each openspecSpecCompressCommandIds}}
-  - `{{this}}`
-{{/each}}
-- 压缩说明：`{{{compressionBrief}}}`
 
 {{#if targetScopeMarkdown}}
 ### 仓库范围
 
 {{{targetScopeMarkdown}}}
 {{else}}
+### 仓库范围
+
 本次没有提供明确的仓库范围文本。把当前项目根目录之外的仓库视为超出范围。
 {{/if}}
-
 {{#if targetRepositories}}
 
 ### 已选仓库
 {{#each targetRepositories}}
-- `{{displayName}}` 位于 `{{path}}`（权限：`{{accessType}}`）
+- `{{{displayName}}}` 位于 `{{{path}}}`（权限：`{{{accessType}}}`）
 {{/each}}
 {{/if}}
 
+## 用户输入
+- 已选命令：
+{{#each openspecSpecCompressCommandIds}}
+  - `{{{this}}}`
+{{/each}}
+
+### 压缩说明
+
+````text
+{{{compressionBrief}}}
+````
+
 ## 要求
-1. 始终在 `{{projectPath}}` 内工作。
+1. 始终在 `{{{projectPath}}}` 内工作。
 2. 把 `docs/openspec-spec-compression.md` 视为本次任务的权威工作流参考。
 3. 除非用户明确扩展范围，否则 OpenSpec 资产编辑必须限制在 `openspec/specs/` 与 `openspec/specs/archive/`。
 4. 不要把 active `openspec/changes/` 内容纳入本次压缩流程的默认修改范围。
@@ -55,6 +64,14 @@
 15. 默认使用用户输入所用语言回复；若混合语言，以最后一个明确语言指令为准。
 16. 若没有可写仓库，只进行只读分析，并给出可执行的后续修改建议。
 
+### 建议执行流程
+1. 阅读 `docs/openspec-spec-compression.md`，并检查当前 `openspec/specs/` 状态。
+2. 若条件允许，先用 `openspec validate --specs --no-interactive` 记录校验基线。
+3. 按文档工作流识别退役 spec、未扁平化的 delta 头、散落的 requirement 块，或缺失的必需段。
+4. 只应用文档明确允许的机械式清理步骤。
+5. 每完成一批逻辑修改就重新校验，确保失败趋势下降或至少有明确解释。
+6. 总结哪些内容被修改、哪些内容被刻意保留，以及使用了哪些假设。
+
 ## 输出格式
 - 必须按以下顺序输出，并使用这些二级标题：`## 结论`、`## 假设（如有）`、`## 下一步`。
 - `## 结论`：第一句用一句加粗的话说明结果。之后最多列出 5 条关键事实。路径、命令和标识符使用行内代码。仅在确实需要对比时使用表格。
@@ -63,11 +80,3 @@
     - **原因：** <一句话>
     - **影响：** <一句话>
 - `## 下一步`：使用有序列表，最推荐的操作放在第一项，每项以加粗的动作短语开头。若只有一个后续动作，写成一句话。
-
-## 建议执行流程
-1. 阅读 `docs/openspec-spec-compression.md`，并检查当前 `openspec/specs/` 状态。
-2. 若条件允许，先用 `openspec validate --specs --no-interactive` 记录校验基线。
-3. 按文档工作流识别退役 spec、未扁平化的 delta 头、散落的 requirement 块，或缺失的必需段。
-4. 只应用文档明确允许的机械式清理步骤。
-5. 每完成一批逻辑修改就重新校验，确保失败趋势下降或至少有明确解释。
-6. 总结哪些内容被修改、哪些内容被刻意保留，以及使用了哪些假设。
