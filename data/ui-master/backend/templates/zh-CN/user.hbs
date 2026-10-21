@@ -12,16 +12,9 @@
 在所选项目中执行一次结构化的 UI Master 任务。
 
 ## 执行上下文
-- 工作目录：`{{projectPath}}`
-{{#if repositoryPath}}- 解析后的仓库提示：`{{repositoryPath}}`{{/if}}
-- UI 任务说明：`{{{uiMasterDescription}}}`
-{{#if sceneKey}}- 请求场景 key：`{{sceneKey}}`{{/if}}
-
-{{#if uiMasterCommandIds}}
-### 已选命令
-{{#each uiMasterCommandIds}}
-- `{{this}}`
-{{/each}}
+- 工作目录：`{{{projectPath}}}`
+{{#if repositoryPath}}
+- 解析后的仓库提示：`{{{repositoryPath}}}`
 {{/if}}
 
 {{#if targetScopeMarkdown}}
@@ -29,27 +22,44 @@
 
 {{{targetScopeMarkdown}}}
 {{else}}
+### 目标范围
+
 本次没有提供前端拼接的目标范围文本。不要假定超出当前项目根目录的仓库范围。
 {{/if}}
-
 {{#if referenceVaults}}
 
 ### 补充引用 Vault
 {{#each referenceVaults}}
-- `{{name}}` (`{{id}}`) 位于 `{{physicalPath}}`{{#if type}} [{{type}}]{{/if}}
+- `{{{name}}}` (`{{{id}}}`) 位于 `{{{physicalPath}}}`{{#if type}} [{{{type}}}]{{/if}}
 {{/each}}
 {{/if}}
-
 {{#if targetProjects}}
 
 ### 补充项目引用
 {{#each targetProjects}}
-- `{{name}}` 位于 `{{physicalPath}}`（权限：`{{accessType}}`）
+- `{{{name}}}` 位于 `{{{physicalPath}}}`（权限：`{{{accessType}}}`）
 {{/each}}
 {{/if}}
 
+## 用户输入
+{{#if uiMasterCommandIds}}
+- 已选命令：
+{{#each uiMasterCommandIds}}
+  - `{{{this}}}`
+{{/each}}
+{{/if}}
+{{#if sceneKey}}
+- 请求场景 key：`{{{sceneKey}}}`
+{{/if}}
+
+### UI 任务说明
+
+````text
+{{{uiMasterDescription}}}
+````
+
 ## 要求
-1. 始终在 `{{projectPath}}` 内工作。
+1. 始终在 `{{{projectPath}}}` 内工作。
 2. 所有修改必须围绕当前 UI 任务说明展开。
 3. 所有代码修改都必须限制在被标记为 `write` 的仓库内。
 4. 被标记为 `read` 的仓库只能作为只读上下文。
@@ -61,6 +71,13 @@
 8. 默认使用用户输入所用语言回复；若混合语言，以最后一个明确语言指令为准。
 9. 若没有可写仓库，只进行只读分析，并给出可执行的后续修改建议。
 
+### 建议执行流程
+1. 检查所选目标仓库，并区分哪些是 `write`、哪些是 `read`。
+2. 将已选命令集合映射到当前任务说明。
+3. 直接在代码中实现所需 UI 变更。
+4. 保持修改聚焦，避免无关重构。
+5. 在最终响应里总结结果与后续约束。
+
 ## 输出格式
 - 必须按以下顺序输出，并使用这些二级标题：`## 结论`、`## 假设（如有）`、`## 下一步`。
 - `## 结论`：第一句用一句加粗的话说明结果。之后最多列出 5 条关键事实。路径、命令和标识符使用行内代码。仅在确实需要对比时使用表格。
@@ -69,10 +86,3 @@
     - **原因：** <一句话>
     - **影响：** <一句话>
 - `## 下一步`：使用有序列表，最推荐的操作放在第一项，每项以加粗的动作短语开头。若只有一个后续动作，写成一句话。
-
-## 建议执行流程
-1. 检查所选目标仓库，并区分哪些是 `write`、哪些是 `read`。
-2. 将已选命令集合映射到当前任务说明。
-3. 直接在代码中实现所需 UI 变更。
-4. 保持修改聚焦，避免无关重构。
-5. 在最终响应里总结结果与后续约束。
