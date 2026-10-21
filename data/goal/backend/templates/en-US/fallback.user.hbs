@@ -12,33 +12,38 @@ This prompt is running in a non-interactive environment.
 Execute a sustained-work goal run using the bundled `goal` preset fallback strategy.
 
 ## Execution context
-- Working directory: `{{projectPath}}`
-{{#if repositoryPath}}- Resolved repository hint: `{{repositoryPath}}`
+- Working directory: `{{{projectPath}}}`
+{{#if repositoryPath}}
+- Resolved repository hint: `{{{repositoryPath}}}`
 {{/if}}
 
 ### Routing notes
 - This run was routed to the fallback goal prompt for an agent family without native `/goal` support.
 - If a leading `/goal ...` line appears above, treat it as preset metadata that names the sustained-work objective.
-{{#if goalCommandIds}}
-- Selected preset command id(s):
-{{#each goalCommandIds}}
-  - `{{this}}`
-{{/each}}
-{{/if}}
 
 {{#if targetScopeMarkdown}}
 ### Repository scope
 
 {{{targetScopeMarkdown}}}
 {{else}}
-Repository scope: no explicit repository selections were provided.
+### Repository scope
+
+No explicit repository selections were provided.
 {{/if}}
 
+## User input
+{{#if goalCommandIds}}
+- Selected preset command id(s):
+{{#each goalCommandIds}}
+  - `{{{this}}}`
+{{/each}}
+
+{{/if}}
 ### Goal description
 
-```text
+````text
 {{{goalDescription}}}
-```
+````
 
 ## Requirements
 1. Treat the goal description as the primary sustained-work objective.
