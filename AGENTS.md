@@ -23,7 +23,7 @@ npm test
 
 Fix validator diagnostics in the authored package; do not relax schemas or patch generated output.
 
-Node.js 24+ is required (`engines`; CI runs Node 24). `.github/workflows/validate-community-packages.yml` runs `npm ci`, `npm run validate`, and `npm test` (`test/validate.test.mjs`); keep local runs equivalent. `validate` is `hagitask validate .` from the pinned `@hagicode/hagitask` devDependency.
+Node.js 24+ is required (`engines`; CI runs Node 24). `.github/workflows/validate-community-packages.yml` runs `npm ci`, `npm run validate`, and `npm test` (`test/validate.test.mjs`); it runs for pull requests and pushes to `main` (job `validate-packages`); keep local runs equivalent. `validate` is `hagitask validate .` from the pinned `@hagicode/hagitask` devDependency.
 
 ## Conventions
 
@@ -31,6 +31,7 @@ Node.js 24+ is required (`engines`; CI runs Node 24). `.github/workflows/validat
 - Preserve the shared `manifest`, `frontend`, `backend`, `locales`, and `store-page` layout.
 - Use the published HagiTask schemas and bump package semantic versions for published changes.
 - Do not copy or edit local schema files; schema changes belong in HagiTask.
+- Enabled task target selections may use only the scope sources `owner-project-repositories`, `vault-registry`, or `project-registry`; unknown sources fail validation.
 
 ## Deployment
 
