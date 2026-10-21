@@ -1,12 +1,31 @@
-Run `{{command}}` for the selected project at `{{projectPath}}`.
+## Task
 
-{{#if operationDescription}}
-Additional operation instructions:
-{{{operationDescription}}}
+Run the selected MonoSpecs command for the selected project.
+
+## Execution context
+
+- Command: `{{command}}`
+- Project path: `{{{projectPath}}}`
+
+### Read-only reference scope
+
+{{#if targetScopeMarkdown}}
+{{{targetScopeMarkdown}}}
+{{else}}
+No read-only reference scope was provided.
 {{/if}}
 
-Read-only reference scope:
-{{{targetScopeMarkdown}}}
+## User input
+
+### Additional operation instructions
+
+{{#if operationDescription}}
+````text
+{{{operationDescription}}}
+````
+{{else}}
+No additional operation instructions were provided.
+{{/if}}
 
 ## Output format
 - Return output in this exact order, using these level-2 headings: `## Conclusion`, `## Assumptions (if any)`, `## Next step`.
