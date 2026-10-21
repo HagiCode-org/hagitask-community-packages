@@ -12,13 +12,10 @@ This prompt is running in a non-interactive environment.
 Execute a structured `last30days` research task for the selected project.
 
 ## Execution context
-- Working directory: `{{projectPath}}`
-{{#if repositoryPath}}- Resolved repository hint: `{{repositoryPath}}`{{/if}}
-- Selected mode:
-{{#each last30daysMode}}
-  - `{{this}}`
-{{/each}}
-- Query: `{{{last30daysQuery}}}`
+- Working directory: `{{{projectPath}}}`
+{{#if repositoryPath}}
+- Resolved repository hint: `{{{repositoryPath}}}`
+{{/if}}
 
 ### Mode-specific query shaping
 - `general`: research the topic as entered.
@@ -31,19 +28,32 @@ Execute a structured `last30days` research task for the selected project.
 
 {{{targetScopeMarkdown}}}
 {{else}}
+### Repository scope
+
 No explicit repository scope markdown was provided. Treat repositories outside the current project root as out of scope.
 {{/if}}
-
 {{#if targetRepositories}}
 
 ### Selected repositories
 {{#each targetRepositories}}
-- `{{displayName}}` at `{{path}}` (access: `{{accessType}}`)
+- `{{{displayName}}}` at `{{{path}}}` (access: `{{{accessType}}}`)
 {{/each}}
 {{/if}}
 
+## User input
+- Selected mode:
+{{#each last30daysMode}}
+  - `{{{this}}}`
+{{/each}}
+
+### Query
+
+````text
+{{{last30daysQuery}}}
+````
+
 ## Requirements
-1. Work inside `{{projectPath}}`.
+1. Work inside `{{{projectPath}}}`.
 2. Use the installed `/last30days` skill as the primary research mechanism.
 3. Preserve the selected `last30daysMode` when shaping the query.
 4. Keep all file edits restricted to repositories selected with `write` access.
@@ -55,7 +65,7 @@ No explicit repository scope markdown was provided. Treat repositories outside t
 10. Reply in the user's input language by default; for mixed-language input, follow the last explicit language instruction.
 11. If no writable repository is selected, do read-only analysis only and provide actionable follow-up edit suggestions.
 
-Suggested execution flow:
+### Suggested workflow
 1. Inspect the selected repository scope and note which repositories are `write` versus `read`.
 2. Translate `last30daysMode` and `last30daysQuery` into the appropriate `/last30days` invocation.
 3. Run the skill and collect the latest evidence.
