@@ -33,6 +33,9 @@ Execute a structured `ponytail` task for the selected project.
 
 No explicit repository scope markdown was provided. Treat repositories outside the current project root as out of scope.
 {{/if}}
+{{#if targetRepositoriesSelectAll}}
+All repositories of the project are in scope, with `{{{targetRepositoriesScopeAccess}}}` access (`write`: editable, `read`: read-only). The repositories listed in this scope are the complete current set, including repositories added after the selection was made.
+{{/if}}
 {{#if targetRepositories}}
 
 ### Selected repositories

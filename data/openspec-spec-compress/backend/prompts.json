@@ -46,6 +46,16 @@
       "name": "targetRepositories",
       "source": "computed-context",
       "description": "Optional selected repositories resolved from the preset task scope."
+    },
+    {
+      "name": "targetRepositoriesSelectAll",
+      "source": "computed-context",
+      "description": "Optional. True when the repository scope is the resolved select-all state; absent or false means an explicit list."
+    },
+    {
+      "name": "targetRepositoriesScopeAccess",
+      "source": "computed-context",
+      "description": "Optional. Access of the resolved select-all scope: write or read. Present only when targetRepositoriesSelectAll is true."
     }
   ],
   "rendering": {

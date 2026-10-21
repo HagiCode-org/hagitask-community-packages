@@ -33,6 +33,9 @@
 
 没有提供明确的仓库范围 Markdown。将当前项目根目录之外的仓库视为超出范围。
 {{/if}}
+{{#if targetRepositoriesSelectAll}}
+本次范围为项目的全部仓库，访问权限为 `{{{targetRepositoriesScopeAccess}}}`（`write` 为可编辑，`read` 为只读）。本范围列出的仓库是当前完整集合，包括选择之后加入项目的仓库。
+{{/if}}
 {{#if targetRepositories}}
 
 ### 已选仓库
