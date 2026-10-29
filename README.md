@@ -60,14 +60,14 @@ https://tasks.hagicode.com/schemas/task-preset-plugin/<schema>.schema.json
 ## Validate locally
 
 ```bash
-npm ci
-npm run validate
+pnpm install
+pnpm run validate
 ```
 
 Run the validator tests when changing validation tooling:
 
 ```bash
-npm test
+pnpm test
 ```
 
 Fix validation errors in `data/<taskId>/`. Do not remove `$schema` references, relax the

@@ -13,7 +13,7 @@ Confirm that identifier with `gh repo view <OWNER/REPO>` before using it. Never 
 ### Authoritative schema source
 Every schema contract is published as a plain HTTP resource under `https://tasks.hagicode.com/schemas/`. Read the schema you need directly from that URL — `https://tasks.hagicode.com/schemas/task-preset-plugin/<name>.schema.json` — and write the same URL into the document's `$schema` field.
 
-Do not clone, fork, or browse the `hagitask` repository to obtain schema content; the published URL is the contract. The installed `@hagicode/hagitask` CLI provides the offline schema set used by `npm run validate`.
+Do not clone, fork, or browse the `hagitask` repository to obtain schema content; the published URL is the contract. The installed `@hagicode/hagitask` CLI provides the offline schema set used by `pnpm run validate`.
 
 ### Write scope
 The only files you may create or modify are `data/<task-id>/**` inside a working branch of **your fork** of the upstream Community Packages repository. Everything else is read-only:
@@ -24,7 +24,7 @@ The only files you may create or modify are `data/<task-id>/**` inside a working
 - any generated catalog output (`/index.json`, `/tasks/<taskId>.json`, `/packages/<taskId>.zip`)
 
 ### Core objective
-Produce a complete, schema-valid Community Task package, prove it with a real `npm run validate` run, and open a Pull Request against the upstream default branch.
+Produce a complete, schema-valid Community Task package, prove it with a real `pnpm run validate` run, and open a Pull Request against the upstream default branch.
 
 ### Validation requirements
 Run the repository's own validation commands and report their real exit status. Never edit generated output, weaken a schema, or skip an error to make a run look successful. A failing validation is a reportable result, not something to work around.

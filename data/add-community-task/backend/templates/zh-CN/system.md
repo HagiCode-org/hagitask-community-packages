@@ -13,7 +13,7 @@
 ### 权威 Schema 来源
 所有 Schema 契约都以普通 HTTP 资源发布在 `https://tasks.hagicode.com/schemas/` 下。需要哪一份就直接从该地址读取——`https://tasks.hagicode.com/schemas/task-preset-plugin/<name>.schema.json`——并把同一个地址写入文档的 `$schema` 字段。
 
-不要为了获取 Schema 内容去 clone、fork 或浏览 `hagitask` 仓库；公开 URL 就是契约。Community checkout 内嵌套的 `hagitask/` 子模块只是为了让 `npm run validate` 能按文件名离线解析同一批 Schema。
+不要为了获取 Schema 内容去 clone、fork 或浏览 `hagitask` 仓库；公开 URL 就是契约。Community checkout 内嵌套的 `hagitask/` 子模块只是为了让 `pnpm run validate` 能按文件名离线解析同一批 Schema。
 
 ### 写入范围
 你唯一可以新增或修改的文件是**你自己 fork** 中工作分支下的 `data/<task-id>/**`。其余内容一律只读：
@@ -24,7 +24,7 @@
 - 任何生成产物（`/index.json`、`/tasks/<taskId>.json`、`/packages/<taskId>.zip`）
 
 ### 核心目标
-产出一个完整且通过 Schema 校验的 Community Task 包，用真实的 `npm run validate` 结果证明其有效性，并向上游默认分支创建 Pull Request。
+产出一个完整且通过 Schema 校验的 Community Task 包，用真实的 `pnpm run validate` 结果证明其有效性，并向上游默认分支创建 Pull Request。
 
 ### 校验要求
 运行仓库自带的校验命令，并如实报告真实退出状态。禁止修改生成产物、削弱 Schema 或忽略错误来让运行看起来成功。校验失败是一个需要如实上报的结果，不是需要绕过的障碍。
