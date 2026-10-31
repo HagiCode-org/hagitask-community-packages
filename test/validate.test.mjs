@@ -98,3 +98,40 @@ test('every non-exempt user template carries the output-format block with its he
     }
   }
 });
+
+// The project selector rule covers the packages this change touches. Other packages are exempt by name.
+const projectPickerRulePackages = ['codegraph-tasks', 'github-tasks'];
+const projectPickerExemptions = {
+  'agents-md-update': 'declares the picker first but optional (required: false); outside this change until its required flag is decided',
+};
+
+function bundleValue(bundle, key) {
+  return key.split('.').reduce((node, part) => node?.[part], bundle);
+}
+
+test('project selector exemptions name existing packages, carry a reason and sit outside the rule', () => {
+  const ids = new Set(packageIds());
+  for (const [id, reason] of Object.entries(projectPickerExemptions)) {
+    assert.ok(ids.has(id), `project selector exemption ${id} does not match a package`);
+    assert.ok(reason.trim().length > 0, `project selector exemption ${id} needs a non-empty reason`);
+    assert.equal(projectPickerRulePackages.includes(id), false, `${id} cannot be both exempt and checked`);
+  }
+});
+
+test('every rule package declares a required project-picker first in its first section, with both locale keys', () => {
+  for (const id of projectPickerRulePackages) {
+    const panel = JSON.parse(readFileSync(join(repoRoot, 'data', id, 'frontend', 'panel.json'), 'utf8'));
+    const field = panel.sections[0].fields[0];
+    assert.equal(field.id, 'projectId', `${id} must declare the project selector first`);
+    assert.equal(field.renderer, 'project-picker', `${id} project selector renderer`);
+    assert.equal(field.required, true, `${id} project selector must be required`);
+    for (const locale of ['en-US', 'zh-CN']) {
+      const bundle = JSON.parse(readFileSync(join(repoRoot, 'data', id, 'locales', `${locale}.json`), 'utf8'));
+      for (const key of [field.label.key, field.hint.key]) {
+        const value = bundleValue(bundle, key);
+        assert.equal(typeof value, 'string', `${id} ${locale} bundle must define ${key}`);
+        assert.ok(value.trim().length > 0, `${id} ${locale} ${key} must not be empty`);
+      }
+    }
+  }
+});
