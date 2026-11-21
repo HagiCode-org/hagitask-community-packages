@@ -35,12 +35,6 @@
           }
         }
       ]
-    },
-    "vaults": {
-      "enabled": false
-    },
-    "projects": {
-      "enabled": false
     }
   },
   "inputBindings": [
